@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="file_item_padding">8dp</dimen>
+    <dimen name="file_item_title_size">16sp</dimen>
+
+    <dimen name="appbar_padding">8dp</dimen>
+    <dimen name="appbar_titleSize">22sp</dimen>
+    <dimen name="appbar_height">48dp</dimen>
+
+    <dimen name="fileActivity_padding">8dp</dimen>
+    <dimen name="fileActivity_appbar_titleSize">22sp</dimen>
+    <dimen name="fileActivity_recyclerview_marginTop">16dp</dimen>
+
+
+</resources>
