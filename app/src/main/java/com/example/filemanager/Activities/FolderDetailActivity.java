@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.filemanager.Adapters.FileItemAdapter;
@@ -17,7 +16,7 @@ import com.example.filemanager.CustomViews.CustomToolbar;
 import com.example.filemanager.CustomViews.FileItemOptionsMenu;
 import com.example.filemanager.Data.FileItemModel.FileItem;
 import com.example.filemanager.R;
-import com.example.filemanager.ViewModel.SharedFilesViewModel;
+import com.example.filemanager.ViewModel.MediaViewModel;
 
 import java.util.List;
 import java.util.Locale;
@@ -45,7 +44,7 @@ public class FolderDetailActivity extends AppCompatActivity {
     //Recyclerview
     FileItemAdapter fileAdapter;
     RecyclerView fileRecyclerView;
-    SharedFilesViewModel viewModel;
+    MediaViewModel viewModel;
 
 
     @Override
@@ -196,7 +195,7 @@ public int getFileIcon (FileItem item)
     }
 
     public void setupFilesViewModel(){
-         viewModel = new SharedFilesViewModel();
+         viewModel = new MediaViewModel();
          String targetFolder = getIntent().getStringExtra(INTENT_EXTRA_TARGET_FOLDER);
 
          if(targetFolder==null){
@@ -210,7 +209,7 @@ public int getFileIcon (FileItem item)
                     }
                 });
 
-         viewModel.getFilesInFolder(targetFolder);
+         viewModel.getFiles(targetFolder);
     }
 
     @Override
