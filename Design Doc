@@ -1,0 +1,117 @@
+Design Doc
+-------------
+Problem definition:
+------------------------
+File manager attempts to list shared files on user's device
+in a simple to use interface.
+
+Get access to audio, video, image and documents all in one
+place.
+
+From the application's developer's perspective, this File manager
+demonstrates how to access an Android's device's shared folders
+specifically through the use of MediaStore API.
+
+User stories:
+------------------
+First launched activity displays image, video, audio and document
+folders that the user can interact with. Clicking on any of
+the folders would launch another activity that would display
+the selected folder in detail  (Done)
+
+ - Create a side project to expirment opening pdf, xml, html
+   and other common documents with the app chooser. (So far
+   pdf can be opened)
+ 
+ - Integrate the file picker into the file manager app so that
+   user can select which files to open (Done)
+   
+ - Integrate the app chooser into the file manager app so
+   that users can open selected files (Done)
+   
+ - Create an alert dialog box to alert users to select files
+   to open before prompting user with the system file picker
+   (Done)
+        
+
+
+
+The folder detail activity should display meta data for all files in the
+selected files in the shared folder in a recyclerview list when it is selected 
+ 
+  - In folder detail activity, implement the file long click event handler so that, the appbar changes color to indicate the
+    clicked file has been selected (Done)
+    
+  - Create the menu options in the FileDetailActivity so that users may open and view properties of a selected file (Done)
+    - create the menu xml
+    - implement onCreateOptionsMenu() in FileDetailActivity, to inflate the FileDetailActivity options menu
+    - impelement the event events for the open, and view file properties button(s) of the menu option
+       - open - launches app chooser to open the clicked file
+       - view properties - launches alert dialog and displays file properties
+       - Implement alert dialog to display file properties of a selected file
+         
+  
+  - In the same long click event handler, make the menu options in the toolbar visible so that the user can 
+    1) Open the file
+    2) View file properties  
+    
+  - Create a method that will display the selected file properties (?+ 6 Hours left)
+    - Create an alert dialog that will display the file properties as a string (Done)
+    - Find out how to also add extension and date modified in media object, then display it in dialog ( 6+ hours )
+      - Find a solution to get a date modified - implement and test ( 3 hours)
+      - Find a solution to get a file's extension only - implement and test ( 3 hours)
+ 
+ 
+
+
+Display lines beteen fileitems while recyclerview is using a linear layout manager (< 1 Hours)
+
+Add a button to toggle FileDetailActivity's recyclerview layout manager between LinearLayout manager and GridLayout manager (?+10 or more hours)
+    (3 Subfeatures: Add toogle button assets, implement toogle layout as menu option, Research and implement code solution
+      get file thumbnail and load into recyclerview item layout)
+
+    - Add vector assets for the button responsible for changing the recyclerview's layout manager at runtime (Between linear and grid)
+      (1 Hour)
+    
+    - Add a toogle button in FileDetailActivity layout, as a button ( Menu options) (3 Hours)
+      	 - Research how to display this menu option as an icon adjacent to the 3 dot menu
+     	 - Add two options menu options R.id.toogleLinearLayout, R.id.toogleGridLayout
+         	- If one menu option is visible e.g toogleLinearLayout the other (toogleGridLayout) becomes invisible and
+         	   vice versa
+      
+      	 - Add logic to onCreateMenuOptions().
+    		 switch...case R.id.toogleLinearLayout{
+    		  		 mediaFileAdapter.setLayoutMode(MediaFileAdapter.GRID_LAYOUT);
+    		 	 	 recyclerview.setLayoutManager(GridLayoutManager);
+    	 	 	} break;...
+    	  	
+    	     		 case R.id.toogleGridLayout
+    	     		  { mediaFileAdapter.setLayoutMode(MediaFileAdapter.LINEAR_LAYOUT)
+    	   		     recyclerview.setLayoutManger(LinearLayoutManager)		
+ 	      	          }
+    	    		   mediaFileAdapter.notifyDataChanged 
+    	      	 }
+    	      	 
+    	      	 - Check (https://stackoverflow.com/questions/40106261/android-recyclerview-switching-layouts-grid-list-old-viewholders-used) for reference
+     
+       - Create another .xml layout named mediafile_gridlayout_item to display BaseMediaFile objects in a recyclerview when the layout
+     	 manager changes to GridLayoutManager) (3 hours)
+     	 
+     	   - Layout should have a framelayout to highlight if selected
+     	   - Layout should have a container to hold file thumbnails
+     	   - Layout should have field to display filename with extension
+      
+           - When user onClick() viewHolder use holder.setSelected(true)
+             in onBindViewholder(). Inside .setSelected change the background color of the framelayout to color primary if
+             input parameter is true else default background color
+   
+    - Research: solutions on how to acess MediaFile thumbnails, so they can be displayed at a later stage implement and test (+ 3 Hours ?)
+      
+     
+
+   
+
+
+
+
+

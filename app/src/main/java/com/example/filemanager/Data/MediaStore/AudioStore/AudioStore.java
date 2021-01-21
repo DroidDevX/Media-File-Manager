@@ -5,9 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.example.filemanager.Data.MediaStore.BaseMediaStore;
-import com.example.filemanager.Data.MediaStore.MediaFile;
+import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +17,14 @@ import java.util.List;
  * Accesses the Audio folder in shared local storage by using MediaStore API
  * */
 public class AudioStore extends BaseMediaStore {
-
+    private static final String TAG = "AudioStore";
     public AudioStore(Context context) {
         super(context);
     }
 
     @Override
-    public List<MediaFile> getFiles() {
-        List<MediaFile> audiolist = new ArrayList<>();
+    public List<BaseMediaFile> getFiles() {
+        List<BaseMediaFile> audiolist = new ArrayList<>();
 
         String[] projection = new String[]{
                 MediaStore.Audio.Media._ID,
@@ -46,20 +47,20 @@ public class AudioStore extends BaseMediaStore {
 
             // Cache column indices.
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
-            int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED);
-            //int durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION);
+            int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
             int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
 
             while (cursor.moveToNext()) {
                 long id = cursor.getLong(idColumn);
                 String name = cursor.getString(nameColumn);
-                //int duration = cursor.getInt(durationColumn);
                 int size = cursor.getInt(sizeColumn);
 
-                Uri contentUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
-                audiolist.add(new AudioFile(contentUri, name, size));
+                Uri contentUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+                String fileMIMEtype = getContext().getContentResolver().getType(contentUri);
+                audiolist.add(new AudioFileBase(contentUri, name, size,fileMIMEtype));
             }
         } catch (Exception e) {
+            Log.e(TAG,"Error:"+e.toString());
         } finally {
             if (cursor != null)
                 cursor.close();

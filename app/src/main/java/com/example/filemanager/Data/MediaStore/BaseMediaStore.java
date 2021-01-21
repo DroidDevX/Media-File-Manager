@@ -14,11 +14,12 @@ public abstract class BaseMediaStore  {
 
     Context context;
 
+
     public BaseMediaStore(Context context){
         this.context =context;
     }
 
-    public abstract List<MediaFile> getFiles();
+    public abstract List<BaseMediaFile> getFiles();
 
     public Context getContext()
     {

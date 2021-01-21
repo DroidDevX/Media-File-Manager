@@ -1,13 +1,14 @@
 package com.example.filemanager.Data.MediaStore.DocumentStore;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.example.filemanager.Data.MediaStore.BaseMediaStore;
-import com.example.filemanager.Data.MediaStore.MediaFile;
+import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +18,21 @@ import java.util.List;
  * Accesses the Documents folder in shared local storage by using MediaStore API
  * */
 public class DocumentStore  extends BaseMediaStore {
-
+    private static final String TAG = "DocumentStore";
     public DocumentStore(Context context) {
         super(context);
     }
+
+
+    /*
+    * New solution:
+    * Click button-> pops up alert dialog -> tell user to select file from system picker
+    *  -> url of selected file is returned in onActivityResult -> log the url of the chosen file
+    *  -> start the app chooser given the url of the selected file
+    *
+    *
+    *
+    * */
 
     @Override
     public Context getContext() {
@@ -28,44 +40,58 @@ public class DocumentStore  extends BaseMediaStore {
     }
 
     @Override
-    public List<MediaFile> getFiles() {
-        List<MediaFile> documentList = new ArrayList<>();
+    public List<BaseMediaFile> getFiles() {
+        Log.d(TAG, "getFiles: ");
+        List<BaseMediaFile> documentList = new ArrayList<>();
 
-        String[] projection = new String[]{
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.DATE_MODIFIED,
-                MediaStore.Audio.Media.SIZE
+        Uri table=MediaStore.Files.getContentUri("external");
+        String where = MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+                +" OR " +MediaStore.Files.FileColumns.MIME_TYPE + "=?";
+
+        String[] args ={
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("pdf"),
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("doc"),
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("xls"),
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("xlsx"),
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("ppt"),
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("txt"),
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("rtx"),
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("rtf"),
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("html")
         };
-        String selection = null;
-        String[] selectionArgs = new String[]{};
+
+        String[] columns = new String[]{
+                MediaStore.Files.FileColumns.DATA
+        };
+        //exclude media files
         String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
         Cursor cursor = null;
         try {
             cursor = getContext().getContentResolver().query(
-                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    projection,
-                    selection,
-                    selectionArgs,
+                    table,
+                    columns,
+                    where,
+                    args,
                     sortOrder
             );
 
             // Cache column indices.
-            int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
-            int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED);
-            //int durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION);
-            int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
+            int data = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
 
             while (cursor.moveToNext()) {
-                long id = cursor.getLong(idColumn);
-                String name = cursor.getString(nameColumn);
-                //int duration = cursor.getInt(durationColumn);
-                int size = cursor.getInt(sizeColumn);
 
-                Uri contentUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
-                documentList.add(new DocumentFile(contentUri, name, size));
             }
         } catch (Exception e) {
+            Log.e(TAG, "Error: "+e.toString());
         } finally {
             if (cursor != null)
                 cursor.close();

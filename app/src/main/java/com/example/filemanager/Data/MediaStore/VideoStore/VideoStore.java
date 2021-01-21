@@ -5,27 +5,28 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.example.filemanager.Data.MediaStore.BaseMediaStore;
-import com.example.filemanager.Data.MediaStore.MediaFile;
+import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 /**
  * Accesses the Video folder in shared local storage by using MediaStore API
  * */
 public class VideoStore extends BaseMediaStore {
-
+    private static final String TAG = "VideoStore";
     public VideoStore(Context context) {
         super(context);
     }
 
     @Override
-    public List<MediaFile> getFiles() {
-        List<MediaFile> videoList = new ArrayList<>();
+    public List<BaseMediaFile> getFiles() {
+
+        List<BaseMediaFile> videoList = new ArrayList<>();
 
         String[] projection = new String[]{
                 MediaStore.Video.Media._ID,
@@ -35,7 +36,7 @@ public class VideoStore extends BaseMediaStore {
         };
 
         String selection = null;//MediaStore.Video.Media.DURATION + " >= ?";
-        String[] selectionArgs = new String[]{String.valueOf(TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES))};
+        String[] selectionArgs ={};
         String sortOrder = MediaStore.Video.Media.DISPLAY_NAME + " ASC";
         Cursor cursor = null;
         try {
@@ -60,9 +61,12 @@ public class VideoStore extends BaseMediaStore {
                 int size = cursor.getInt(sizeColumn);
 
                 Uri contentUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
-                videoList.add(new VideoFile(contentUri, name, size));
+                String MIMEtype = getContext().getContentResolver().getType(contentUri);
+                videoList.add(new VideoFileBase(contentUri, name, size,MIMEtype));
+                Log.d(TAG,"Video file found, url = "+contentUri.toString() + ", name = "+name);
             }
         } catch (Exception e) {
+            Log.e(TAG, "Error :"+e.toString() );
         } finally {
             if (cursor != null)
                 cursor.close();

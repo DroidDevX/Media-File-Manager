@@ -7,12 +7,6 @@
     android:orientation="vertical"
     tools:context=".Activities.FolderDetailActivity">
 
-    <com.example.filemanager.CustomViews.CustomToolbar
-        android:id="@+id/toolbar"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/colorPrimary"/>
 
 
 
@@ -24,6 +18,6 @@
         android:layout_height="0dp"
         android:padding="@dimen/fileActivity_padding"
         tools:itemCount="20"
-        tools:listitem="@layout/recyclerview_item_file"/>
+        tools:listitem="@layout/linearlayout_mediafile_viewholder"/>
 
 </LinearLayout>

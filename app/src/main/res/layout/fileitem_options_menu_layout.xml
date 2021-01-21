@@ -6,10 +6,9 @@
     <ImageButton
         android:src="@drawable/fileitem_delete_btn"
         android:id="@+id/deleteFileBtn"
-        android:background="@color/colorPrimary"
         android:layout_weight="1"
         android:layout_width="0dp"
-
+        android:background="@color/colorPrimary"
         android:layout_height="match_parent"/>
 
 

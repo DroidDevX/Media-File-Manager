@@ -1,48 +1,50 @@
 package com.example.filemanager.Activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
+import android.text.Html;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.webkit.MimeTypeMap;
 
-import com.bumptech.glide.Glide;
-import com.example.filemanager.Adapters.FileItemAdapter;
-import com.example.filemanager.CustomViews.CustomToolbar;
-import com.example.filemanager.CustomViews.FileItemOptionsMenu;
-import com.example.filemanager.Data.FileItemModel.FileItem;
+import com.example.filemanager.Adapters.MediaFileAdapter;
+import com.example.filemanager.CustomViews.FilePropertiesDialog;
+import com.example.filemanager.Data.MediaStore.BaseMediaFile;
+import com.example.filemanager.Data.MediaStore.MediaRepository;
 import com.example.filemanager.R;
 import com.example.filemanager.ViewModel.MediaViewModel;
 
 import java.util.List;
 import java.util.Locale;
 
-public class FolderDetailActivity extends AppCompatActivity {
+public class FolderDetailActivity extends AppCompatActivity implements FilePropertiesDialog.DialogOnClickListener{
+
     private static final String TAG = "FolderDetailActivity";
     //Constants
-    private static String APPBAR_TITLE_DEFAULT="";
+    private static String DEFAULT_APPBAR_SHAREDFOLDER_TITLE ="";
     public  static  int     DEFAULT_APPBAR_ICON_RESOURCE_ID =-1;
-    public  static  final String INTENT_EXTRA_TARGET_FOLDER ="target_folder";
     public  static  final String INTENT_EXTRA_APPBAR_ICON ="appbar_icon";
+    
 
-    public static final String AUDIO_FOLDER="audio_folder";
-    public static final String VIDEO_FOLDER="video_folder";
-    public static final String DOCUMENT_FOLDER="document_folder";
-    public static final String IMAGE_FOLDER="image_folder";
+    
+    private int SELECTED_FOLDER=-1;
     public static final int    STATUS_OK=200;
     public static final int    STATUS_FOLDER_NOT_EXIST=201;
 
-    //Appbar
-    CustomToolbar appBar;
-    FileItemOptionsMenu fileItemOptionsMenu;
-
-
-    //Recyclerview
-    FileItemAdapter fileAdapter;
+    MediaFileAdapter fileAdapter;
     RecyclerView fileRecyclerView;
     MediaViewModel viewModel;
 
@@ -51,187 +53,216 @@ public class FolderDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder_detail);
-        setupCustomAppbar();
-        setupFileItemOptionsMenu();
-        setupFilesRecyclerView();
+        setupActionbar();
+        setupFileAdapter();
         setupFilesViewModel();
+        setupFilesRecyclerView();
 
-        //TODO
-        /*
-Design classes that will make querying data from the shared media store much easier
-----------------------------------------------------
-1) FileItem (Interface)
-    - fileURI :String (file path)
-    - toString
-    + getURI()
-    + openFile() - Use implicit intents to open the file , images are opened using gallery, video is opened using
-    		   default media player etc..
-
-2)  BaseSharedStorage <FileType> (interface)
-  + getFiles() : List<FileType>
-
-Provide the implementation details of getFiles() for every subclass of BaseShared storage to
-query List of media files from a shared media folder based on the target folder
--------------------------------------------------------------------------------------
-https://developer.android.com/training/data-storage/shared/media#query-collection
-
-Figure out from which public directory do you want
-to query data from (Audio, video,download folder etc...)
-
-Define content provider query arguments
-  Get Mediastore projection params (store in an array)
-  Define selection params (if needed. For video it could be
-  duration - leave null if none)
-  Define selection args
-  Define query sort order
-
-Use try-catch block to query the content provider that provides
-access to these shared folders. Provide the correct MediaStore
-content URI to the content resolver.
-
-  //Cache column indeices - whatever that means
-  //Get values from you query
-   //id, name, duration, size, content uri
-   //content uri is retreived from the id value
-
-Create the class instance from the queried values.
-
-3) VideoSharedStorage extends BaseSharedStorage <Video>
-  + getFiles() : List<FileType>
-
-  ...Do the same for Audio, Downloads,images and documents
-
-4) Create SharedStorage class
-    mVideoSharedStorage
-    mImageSharedStorage
-    mDownloadsSharedStorage
-    ...etc
-
-    (Each storage instance is storage in a Hashmap)
-     Hashmap<Integer,BaseSharedStorage>;
-     Integer key used are static constants used to identify
-     the storage
-
-    final int STORAGE_VIDEO=0;
-    final int STORAGE_AUDIO=1;
-    ...
-
-    (Shared storage class is a singleton, and has Context)
-
-    Create method to getStorageType(int storageType)
-    BaseSharedStorage getStorage(int storageType)
-      return mStorageMap.get(storageType)
-
-5) Use shared Storage
-
-   BaseSharedStorage videoSharedStorage = SharedStorage.getInstance().getStorage(VIDEO_STORAGE);
-   List<FileItem> videos = videoSharedStorage.getFiles();
-
-   //Set live data in viewmodel  - mfilesLiveData.setValue(videos)
-
-
-For each FileItem received determine the icon to use: (FileAdapter)
-------------------------------------------------------------------------------------
-public int getFileIcon (FileItem item)
-{
-   if(item instance of Video)
-     return R.id.icon_video); etc
-}
-*/
     }
 
-    public void setupCustomAppbar(){
+    @Override
+    public void fileDialogOnBackClicked() {
 
-        appBar = findViewById(R.id.toolbar);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu: ");
+         if(fileAdapter.fileIsLongClicked()){
+             getMenuInflater().inflate(R.menu.file_item_options_menu,menu);
+             return true;
+         }
+         else
+             return super.onCreateOptionsMenu(menu);
+         
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+        Log.d(TAG, "onOptionsItemSelected: ");
+        switch (item.getItemId()){
+            case R.id.openwithOption:
+                launchAppChooser(fileAdapter.getLongClickedFile().getUri());
+                break;
+            case R.id.filePropertiesOption:
+                displayFileProperties(fileAdapter.getLongClickedFile());
+                break;
+        }
+        return false;
+    }
+    
+    
+    
+    public void displayFileProperties(BaseMediaFile file){
+        Log.d(TAG, "displayFileProperties: "+file.toString());
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.dialogContainer,FilePropertiesDialog.createDialogFromFile(file));
+        ft.commit();
+    }
+
+    public void setupActionbar(){
+
+
+
 
         DEFAULT_APPBAR_ICON_RESOURCE_ID = getIntent().getIntExtra(INTENT_EXTRA_APPBAR_ICON,-1);
-        Glide.with(this).load(ResourcesCompat.getDrawable(getResources(),DEFAULT_APPBAR_ICON_RESOURCE_ID,null))
-                                .into(appBar.iconView());
 
-        String targetFolder = getIntent().getStringExtra(INTENT_EXTRA_TARGET_FOLDER);
-        if(targetFolder!=null)
-            switch (targetFolder){
-                case AUDIO_FOLDER : APPBAR_TITLE_DEFAULT ="Audio"; break;
-                case VIDEO_FOLDER : APPBAR_TITLE_DEFAULT ="Video"; break;
-                case IMAGE_FOLDER : APPBAR_TITLE_DEFAULT ="Image"; break;
-                case DOCUMENT_FOLDER: APPBAR_TITLE_DEFAULT="Documents";break;
+
+        if(DEFAULT_APPBAR_ICON_RESOURCE_ID!=-1) {
+            switch (DEFAULT_APPBAR_ICON_RESOURCE_ID) {
+                case R.drawable.icon_audio:
+                    DEFAULT_APPBAR_SHAREDFOLDER_TITLE = "Audio";
+                    break;
+                case R.drawable.icon_video:
+                    DEFAULT_APPBAR_SHAREDFOLDER_TITLE = "Video";
+                    break;
+                case R.drawable.icon_image:
+                    DEFAULT_APPBAR_SHAREDFOLDER_TITLE = "Image";
+                    break;
+                case R.drawable.icon_document:
+                    DEFAULT_APPBAR_SHAREDFOLDER_TITLE = "Documents";
+                    break;
             }
 
-        appBar.setText(APPBAR_TITLE_DEFAULT);
+            setTitle(DEFAULT_APPBAR_SHAREDFOLDER_TITLE);
+
+        }
+
     }
 
-    public void setupFileItemOptionsMenu(){
-        fileItemOptionsMenu = findViewById(R.id.fileItemOptionsMenu);
-        fileItemOptionsMenu.setVisibility(View.GONE);
-        fileItemOptionsMenu.setEventListener(new FileItemOptionsMenu.EventListener() {
+    public void launchAppChooser(Uri uri){
+        Log.d(TAG, "launchAppChooser: "+uri.toString());
+        //Get MIMEType
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        String type = "application/"+mime.getExtensionFromMimeType(getContentResolver().getType(uri));
+        Log.e(TAG,"MIME TYPE ->:"+type);
+        Intent target = new Intent(Intent.ACTION_VIEW);
+        target.setData(uri);
+
+        //Grant URI permissions to apps opening the file
+        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY| Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        Intent intent = Intent.createChooser(target, "Open File");
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            // Instruct the user to install a PDF reader here, or something
+        }
+    }
+
+    public void setupFileAdapter(){
+        Log.d(TAG, "setupFileAdapter: ");
+        Context appContext = getApplicationContext();
+        fileAdapter = new MediaFileAdapter(null);
+        fileAdapter.addItemEventListener(new MediaFileAdapter.ItemEventListener() {
             @Override
-            public void onDeleteBtnClicked(View view) {
+            public void onLongClick(BaseMediaFile file, int itemPos) {
+                invalidateOptionsMenu();
+
+                if (getSupportActionBar()!=null) {
+                    ActionBar actionBar = getSupportActionBar();
+                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+                    actionBar.setTitle(Html.fromHtml(String.format(Locale.ENGLISH,"<font color =#FFFFFF > %s </font>",DEFAULT_APPBAR_SHAREDFOLDER_TITLE)));
+                    actionBar.setSubtitle(Html.fromHtml(String.format(Locale.ENGLISH,"<font color =#FFFFFF > Selected : %s </font>",file.getName())));
+                }
+
+
+                fileAdapter.setLongClickSelected(itemPos);;
+            }
+
+            @Override
+            public void onClick(BaseMediaFile file, int itemPos) {
+                invalidateOptionsMenu();
+
+
+                if (getSupportActionBar()!=null) {
+                    ActionBar actionBar = getSupportActionBar();
+                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorWhite)));
+                    actionBar.setTitle(Html.fromHtml(String.format(Locale.ENGLISH,"<font color =#000000 > %s </font>",DEFAULT_APPBAR_SHAREDFOLDER_TITLE)));
+                    actionBar.setSubtitle("");
+                }
+
+
+
+                fileAdapter.setLongClickSelected(MediaFileAdapter.FILE_NOT_LONG_CLICKED);
+
+                //Launch AppChooser
+                launchAppChooser(file.getUri());
 
             }
         });
-    }
 
+
+        SELECTED_FOLDER = getIntent().getIntExtra(INTENT_EXTRA_APPBAR_ICON,-1); //default folder not exist
+        switch (SELECTED_FOLDER){
+
+            case R.drawable.icon_audio:
+                SELECTED_FOLDER = MediaRepository.AUDIO; break;
+            case R.drawable.icon_video:
+                SELECTED_FOLDER = MediaRepository.VIDEO;break;
+            case R.drawable.icon_image:
+                SELECTED_FOLDER = MediaRepository.IMAGE;break;
+            default: SELECTED_FOLDER= -1;
+            break;
+
+
+        }
+
+        if(SELECTED_FOLDER== -1){
+            setResult(STATUS_FOLDER_NOT_EXIST);
+            finish();
+        }
+
+    }
 
     public void setupFilesRecyclerView(){
-        fileAdapter = new FileItemAdapter(null);
-        fileAdapter.addItemEventListener(new FileItemAdapter.ItemEventListener() {
-            @Override
-            public void onLongClick(FileItem item, int itemPos) {
-                fileAdapter.setSelected(itemPos);
-                appBar.setText("File selected at pos: "+ itemPos);
-                fileItemOptionsMenu.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onClick(FileItem item, int itemPos) {
-                fileAdapter.setSelected(FileItemAdapter.SELECTED_NONE);
-                appBar.setText(APPBAR_TITLE_DEFAULT);
-                fileItemOptionsMenu.setVisibility(View.GONE);
-            }
-        });
+        Log.d(TAG, "setupFilesRecyclerView: ");
         fileRecyclerView = findViewById(R.id.fileRecyclerview);
         fileRecyclerView.setAdapter(fileAdapter);
         fileRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     public void setupFilesViewModel(){
-         viewModel = new MediaViewModel();
-         String targetFolder = getIntent().getStringExtra(INTENT_EXTRA_TARGET_FOLDER);
+         viewModel = new MediaViewModel(getApplication());
+         final int defaultIcon = getIntent().getIntExtra(INTENT_EXTRA_APPBAR_ICON,-1);
+         viewModel.getFilesLiveData().observe(this, new Observer<List<BaseMediaFile>>() {
+             @Override
+             public void onChanged(List<BaseMediaFile> mediaFiles) {
+                 for(BaseMediaFile f: mediaFiles){
+                     String MIMEType = getApplicationContext().getContentResolver().getType(f.getUri());
+                     f.setMIMEType(MIMEType);
+                 }
 
-         if(targetFolder==null){
-             setResult(STATUS_FOLDER_NOT_EXIST);
-             finish();
-         }
-         viewModel.getFilesLiveData().observe(this, new Observer<List<FileItem>>() {
-                    @Override
-                    public void onChanged(List<FileItem> files) {
-                        fileAdapter.setFiles(files);
-                    }
-                });
+                 fileAdapter.setDefaultIcon(defaultIcon);
+                 fileAdapter.setFiles(mediaFiles);
+                 fileAdapter.notifyDataSetChanged();
 
-         viewModel.getFiles(targetFolder);
+             }
+         });
+
+         viewModel.getFiles(SELECTED_FOLDER);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        int lastSelectedItemPos = savedInstanceState.getInt(FileItemAdapter.BUNDLE_ARG_LAST_SELECTED_ITEM_POS);
-        fileAdapter.setSelected(lastSelectedItemPos);
+        int lastSelectedItemPos = savedInstanceState.getInt(MediaFileAdapter.BUNDLE_ARG_LAST_SELECTED_ITEM_POS);
+        fileAdapter.setLongClickSelected(lastSelectedItemPos);
 
-        if(fileAdapter.itemIsSelected()) {
-            appBar.setText(String.format(Locale.ENGLISH,"File selected at pos: %d",fileAdapter.getSelectedItemPos()+1));
-            fileItemOptionsMenu.setVisibility(View.VISIBLE);
-        }
-        else {
-            appBar.setText("Simple File Manager");
-            fileItemOptionsMenu.setVisibility(View.GONE);
-        }
+        if(fileAdapter.fileIsLongClicked())
+            setTitle(String.format(Locale.ENGLISH, "Selected: %s", fileAdapter.getLongClickedFile().getName()));
+
+        else
+            setTitle(DEFAULT_APPBAR_SHAREDFOLDER_TITLE);
+
 
         super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(FileItemAdapter.BUNDLE_ARG_LAST_SELECTED_ITEM_POS, fileAdapter.getSelectedItemPos());
+        outState.putInt(MediaFileAdapter.BUNDLE_ARG_LAST_SELECTED_ITEM_POS, fileAdapter.getLongClickedPos());
         super.onSaveInstanceState(outState);
     }
 
@@ -240,6 +271,8 @@ public int getFileIcon (FileItem item)
         setResult(STATUS_OK);
         finish();
     }
+    
+    
 
 
 }

@@ -2,14 +2,14 @@ package com.example.filemanager.Data.MediaStore.DocumentStore;
 
 import android.net.Uri;
 
-import com.example.filemanager.Data.MediaStore.MediaFile;
+import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 
-public class DocumentFile extends MediaFile {
+public class DocumentFileBase extends BaseMediaFile {
 
     String name;
     int size;
 
-    public DocumentFile(Uri uri, String name, int size) {
+    public DocumentFileBase(Uri uri, String name, int size) {
         super(uri);
         this.name = name;
         this.size = size;
@@ -29,5 +29,14 @@ public class DocumentFile extends MediaFile {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+
+    @Override
+    public String toString() {
+        return "DocumentFile{" +
+                "name='" + name + '\'' +
+                ", size=" + size +
+                '}';
     }
 }

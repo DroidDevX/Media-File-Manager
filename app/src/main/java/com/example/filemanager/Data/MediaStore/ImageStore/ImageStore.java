@@ -5,9 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.example.filemanager.Data.MediaStore.BaseMediaStore;
-import com.example.filemanager.Data.MediaStore.MediaFile;
+import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +18,16 @@ import java.util.List;
  * Accesses the Image folder in shared local storage by using MediaStore API
  * */
 public class ImageStore extends BaseMediaStore {
-
+    private static final String TAG = "ImageStore";
 
     public ImageStore(Context context) {
         super(context);
     }
 
     @Override
-    public List<MediaFile> getFiles() {
-
-        List<MediaFile> imageList = new ArrayList<>();
+    public List<BaseMediaFile> getFiles() {
+        Log.d(TAG, "getFiles: ");
+        List<BaseMediaFile> imageList = new ArrayList<>();
 
         String[] projection = new String[]{
                 MediaStore.Images.Media._ID,
@@ -49,20 +50,21 @@ public class ImageStore extends BaseMediaStore {
 
             // Cache column indices.
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
-            int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
-            //int durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION);
+            int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
             int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
 
             while (cursor.moveToNext()) {
                 long id = cursor.getLong(idColumn);
                 String name = cursor.getString(nameColumn);
-                //int duration = cursor.getInt(durationColumn);
                 int size = cursor.getInt(sizeColumn);
 
-                Uri contentUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
-                imageList.add(new ImageFile(contentUri, name, size));
+                Uri contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                String MIMEType = getContext().getContentResolver().getType(contentUri);
+                imageList.add(new ImageFileBase(contentUri, name, size,MIMEType));
+                Log.d(TAG, "getFiles - new Image file added, uri ="+contentUri.toString());
             }
         } catch (Exception e) {
+            Log.e(TAG,"Error: "+e.toString());
         } finally {
             if (cursor != null)
                 cursor.close();

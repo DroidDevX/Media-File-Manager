@@ -12,5 +12,9 @@
     <dimen name="fileActivity_appbar_titleSize">22sp</dimen>
     <dimen name="fileActivity_recyclerview_marginTop">16dp</dimen>
 
+    <!--sharedfolder_viewholder.xml-->
+    <dimen name="sharedfolder_item_title">18sp</dimen>
+    <dimen name="sharedfolder_item_padding">8dp</dimen>
+
 
 </resources>

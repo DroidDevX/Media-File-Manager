@@ -1,13 +1,13 @@
 package com.example.filemanager.ViewModel;
 
 import android.app.Application;
+import android.util.Log;
 import android.util.SparseIntArray;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.filemanager.Data.MediaStore.BaseMediaStore;
-import com.example.filemanager.Data.MediaStore.MediaFile;
+import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 import com.example.filemanager.Data.MediaStore.MediaRepository;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class MediaViewModel extends ViewModel {
     public static final int MEDIA_FOLDER_DOC=3;
 
 
-    MutableLiveData<List<MediaFile>> filesLiveData;
+    MutableLiveData<List<BaseMediaFile>> filesLiveData;
     private SparseIntArray mediaStoreTypeMap;
     private MediaRepository repository;
 
@@ -35,20 +35,30 @@ public class MediaViewModel extends ViewModel {
         this.repository = MediaRepository.getInstance(application);
     }
 
-    public MutableLiveData<List<MediaFile>> getFilesLiveData() {
+    public MutableLiveData<List<BaseMediaFile>> getFilesLiveData() {
         return filesLiveData;
     }
 
     /**
      <b>Description</b> <br/>
     * Finds the files of a given target folder. <br/>
-     Use static string constants provided by this class(SharedFilesViewModel) as the method argument <br/><br/>
+     Use static string constants provided by this class  as the method argument <br/><br/>
 
      <b>Post condition</b></br>
      Result is set as LiveData get files by invoking getFilesLiveData()
      * @param mediaFolder Target folder in shared storage (Audio, Video, Image, Document and downloads)
      * */
     public void getFiles(int mediaFolder){
+        Log.d(TAG, "getFiles: ");
+        int FOLDER_NOT_FOUND=-1;
+
+        if(mediaStoreTypeMap.get(mediaFolder,-1)!=FOLDER_NOT_FOUND) {
+            List<BaseMediaFile> baseMediaFiles =repository.getMediaStore(mediaFolder).getFiles();
+            Log.d(TAG, "getFiles: , media files ="+ baseMediaFiles.toString());
+            filesLiveData.setValue(baseMediaFiles);
+        }
+        else
+            Log.e(TAG, "getFiles: , FILE NOT FOUND, mediaFolder int = " +mediaFolder );
 
     }
 
