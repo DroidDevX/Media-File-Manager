@@ -11,6 +11,7 @@ import com.example.filemanager.Data.MediaStore.BaseMediaStore;
 import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -51,18 +52,19 @@ public class VideoStore extends BaseMediaStore {
             // Cache column indices.
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID);
             int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME);
-            //int durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION);
+            int dateColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED);
             int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE);
 
             while (cursor.moveToNext()) {
                 long id = cursor.getLong(idColumn);
                 String name = cursor.getString(nameColumn);
-                //int duration = cursor.getInt(durationColumn);
                 int size = cursor.getInt(sizeColumn);
+                Date dateModified = new Date((int) cursor.getDouble(dateColumn));
 
                 Uri contentUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
                 String MIMEtype = getContext().getContentResolver().getType(contentUri);
-                videoList.add(new VideoFileBase(contentUri, name, size,MIMEtype));
+
+                videoList.add(new VideoFileBase(contentUri, name, size,MIMEtype,dateModified));
                 Log.d(TAG,"Video file found, url = "+contentUri.toString() + ", name = "+name);
             }
         } catch (Exception e) {

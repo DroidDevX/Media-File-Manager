@@ -11,6 +11,7 @@ import com.example.filemanager.Data.MediaStore.BaseMediaStore;
 import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -48,19 +49,24 @@ public class ImageStore extends BaseMediaStore {
                     sortOrder
             );
 
+
             // Cache column indices.
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
             int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
             int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
+            int dateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
 
             while (cursor.moveToNext()) {
                 long id = cursor.getLong(idColumn);
                 String name = cursor.getString(nameColumn);
                 int size = cursor.getInt(sizeColumn);
+                Date dateModifed = new Date( (long)(cursor.getDouble(dateColumn)*1000)); //unix timestamp is in seconds. We need milisconds
+                Log.d(TAG, "getFiles: Date raw int ->"+ (int)cursor.getDouble(dateColumn)*1000);
+                Log.d(TAG, "getFiles: , Date modified raw string -> "+dateModifed.toString());
 
                 Uri contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
                 String MIMEType = getContext().getContentResolver().getType(contentUri);
-                imageList.add(new ImageFileBase(contentUri, name, size,MIMEType));
+                imageList.add(new ImageFileBase(contentUri, name, size,MIMEType,dateModifed));
                 Log.d(TAG, "getFiles - new Image file added, uri ="+contentUri.toString());
             }
         } catch (Exception e) {

@@ -2,27 +2,24 @@ package com.example.filemanager.Data.MediaStore.VideoStore;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 import com.example.filemanager.Data.MediaStore.BaseMediaFile;
+
+import java.util.Date;
 
 public class VideoFileBase extends BaseMediaFile {
 
 
-    int size;
 
-    public VideoFileBase(Uri url, String name, int size,String MIMEType) {
-        super(url, name,MIMEType);
-        this.size = size;
+
+    public VideoFileBase(Uri url, String name, int size,String MIMEType, Date dateModified) {
+        super(url, name,MIMEType, dateModified,size);
     }
 
 
 
-    public int getSize() {
-        return size;
-    }
 
-    public void setSize(int size) {
-        this.size = size;
-    }
 
     @Override
     public Uri getUri() {
@@ -31,11 +28,8 @@ public class VideoFileBase extends BaseMediaFile {
 
     @Override
     public String toString() {
-        return "VideoFileBase{" +
-                "size=" + size +
-                ", url=" + uri +
-                ", name='" + name + '\'' +
-                ", MIMEType='" + MIMEType + '\'' +
-                '}';
+         return super.toString() + "/n"+
+                 "Size: "+size;
+
     }
 }

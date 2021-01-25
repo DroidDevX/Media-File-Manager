@@ -10,7 +10,9 @@ import android.util.Log;
 import com.example.filemanager.Data.MediaStore.BaseMediaStore;
 import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,15 +51,17 @@ public class AudioStore extends BaseMediaStore {
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
             int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
             int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
+            int dateColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED);
 
             while (cursor.moveToNext()) {
                 long id = cursor.getLong(idColumn);
                 String name = cursor.getString(nameColumn);
                 int size = cursor.getInt(sizeColumn);
+                Date date = new  Date((int)cursor.getDouble(dateColumn));
 
                 Uri contentUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
                 String fileMIMEtype = getContext().getContentResolver().getType(contentUri);
-                audiolist.add(new AudioFileBase(contentUri, name, size,fileMIMEtype));
+                audiolist.add(new AudioFileBase(contentUri, name, size,fileMIMEtype, date));
             }
         } catch (Exception e) {
             Log.e(TAG,"Error:"+e.toString());
