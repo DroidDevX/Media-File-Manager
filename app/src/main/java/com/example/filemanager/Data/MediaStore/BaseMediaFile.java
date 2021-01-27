@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public abstract class BaseMediaFile
 {
@@ -28,7 +29,7 @@ public abstract class BaseMediaFile
         this.name = name;
         this.MIMEType = MIMEType;
         this.date = date;
-        this.dateFormatter  = new SimpleDateFormat();
+        this.dateFormatter  = new SimpleDateFormat("dd/MM/YYYY", Locale.ENGLISH);
         this.size = size;
     }
 
@@ -78,12 +79,16 @@ public abstract class BaseMediaFile
 
         return stringBuilder.append("\n\n")
 
-                // /content:/media/external/images/media/9052
                 .append("Location: ").append(new File(uri.toString()).getAbsolutePath()).append("\n")
-                .append("MIMEtype: ").append(MIMEType).append("\n")
                 .append("Date Modified: ").append(dateFormatter.format(date)).append("\n")
-                .append("Size: ").append(size)
+                .append("Size: ").append(size).append("\n")
+                .append("Type: ").append(getFileExtension())
                 .toString();
+
+    }
+
+    public String getFileExtension(){
+        return MIMEType.split("/")[1]; // right of delimiter  /, is the extension i.e application / pdf
 
     }
 }
