@@ -59,7 +59,7 @@ selected files in the shared folder in a recyclerview list when it is selected
     - Create an alert dialog that will display the file properties as a string (Done)
     - Find out how to also add extension and date modified in media object, then display it in dialog ( 6+ hours )
       - Find a solution to get a date modified - implement and test ( 3 hours) (Done)
-      - Find a solution to get a file's extension only - implement and test ( 3 hours)***
+      - Find a solution to get a file's extension only - implement and test ( 3 hours)(Done)
  
  
 
@@ -71,13 +71,12 @@ Add a button to toggle FileDetailActivity's recyclerview layout manager between 
       get file thumbnail and load into recyclerview item layout)
 
     - Add vector assets for the button responsible for changing the recyclerview's layout manager at runtime (Between linear and grid)
-      (1 Hour)***
+      (1 Hour)***(Done)
     
     - Add a toogle button in FileDetailActivity layout, as a button ( Menu options) (3 Hours)***
       	 - Research how to display this menu option as an icon adjacent to the 3 dot menu
-     	 - Add two options menu options R.id.toogleLinearLayout, R.id.toogleGridLayout
-         	- If one menu option is visible e.g toogleLinearLayout the other (toogleGridLayout) becomes invisible and
-         	   vice versa
+     	 - Add two options menu options R.id.toogleLinearLayout, R.id.toogleGridLayout (Done)
+         	
       
       	 - Add logic to onCreateMenuOptions().
     		 switch...case R.id.toogleLinearLayout{

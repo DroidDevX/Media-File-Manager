@@ -16,5 +16,8 @@
     <dimen name="sharedfolder_item_title">18sp</dimen>
     <dimen name="sharedfolder_item_padding">8dp</dimen>
 
+    <!--gridlayout_mediafile_item_viewholder.xml-->
+    <dimen name="gridlayout_mediafile_item_title">18sp</dimen>
+    <dimen name="gridlayout_mediafile_item_padding">4dp</dimen>
 
 </resources>

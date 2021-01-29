@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +45,8 @@ public class FolderDetailActivity extends AppCompatActivity implements FilePrope
     public static final int    STATUS_OK=200;
     public static final int    STATUS_FOLDER_NOT_EXIST=201;
 
+    RecyclerView.LayoutManager gridLayoutManager;
+    RecyclerView.LayoutManager linearLayoutManager;
     MediaFileAdapter fileAdapter;
     RecyclerView fileRecyclerView;
     MediaViewModel viewModel;
@@ -69,8 +72,19 @@ public class FolderDetailActivity extends AppCompatActivity implements FilePrope
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: ");
+        //Open with | Properties
          if(fileAdapter.fileIsLongClicked()){
              getMenuInflater().inflate(R.menu.file_item_options_menu,menu);
+             //Grid layout and Linear layout toggle option
+             if(fileAdapter.isGridMode()) {
+                 menu.findItem(R.id.toggleGridlayoutOption).setVisible(false);
+                 menu.findItem(R.id.toggleLinearLayoutOption).setVisible(true);
+             }
+             else
+             {
+                 menu.findItem(R.id.toggleLinearLayoutOption).setVisible(false);
+                 menu.findItem(R.id.toggleGridlayoutOption).setVisible(true);
+             }
              return true;
          }
          else
@@ -89,7 +103,17 @@ public class FolderDetailActivity extends AppCompatActivity implements FilePrope
             case R.id.filePropertiesOption:
                 displayFileProperties(fileAdapter.getLongClickedFile());
                 break;
+            case R.id.toggleGridlayoutOption:
+                toggleGridLayout();
+                invalidateOptionsMenu();
+                break;
+            case R.id.toggleLinearLayoutOption:
+                toggleLinearLayout();
+                invalidateOptionsMenu();
+                break;
         }
+
+
         return false;
     }
     
@@ -155,7 +179,7 @@ public class FolderDetailActivity extends AppCompatActivity implements FilePrope
     public void setupFileAdapter(){
         Log.d(TAG, "setupFileAdapter: ");
         Context appContext = getApplicationContext();
-        fileAdapter = new MediaFileAdapter(null);
+        fileAdapter = new MediaFileAdapter(null,MediaFileAdapter.GRID_LAYOUT);
         fileAdapter.addItemEventListener(new MediaFileAdapter.ItemEventListener() {
             @Override
             public void onLongClick(BaseMediaFile file, int itemPos) {
@@ -221,7 +245,9 @@ public class FolderDetailActivity extends AppCompatActivity implements FilePrope
         Log.d(TAG, "setupFilesRecyclerView: ");
         fileRecyclerView = findViewById(R.id.fileRecyclerview);
         fileRecyclerView.setAdapter(fileAdapter);
-        fileRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        gridLayoutManager = new GridLayoutManager(this,2);
+        linearLayoutManager = new LinearLayoutManager(this);
+        fileRecyclerView.setLayoutManager(gridLayoutManager);
     }
 
     public void setupFilesViewModel(){
@@ -272,7 +298,16 @@ public class FolderDetailActivity extends AppCompatActivity implements FilePrope
         finish();
     }
     
-    
+    public void toggleGridLayout(){
+        fileAdapter.setLayoutMode(MediaFileAdapter.GRID_LAYOUT);
+        //fileAdapter.notifyDataSetChanged();
+        fileRecyclerView.setLayoutManager(gridLayoutManager);
+    }
 
+    public void toggleLinearLayout(){
+        fileAdapter.setLayoutMode(MediaFileAdapter.LINEAR_LAYOUT);
+        //fileAdapter.notifyDataSetChanged();
+        fileRecyclerView.setLayoutManager(linearLayoutManager);
+    }
 
 }

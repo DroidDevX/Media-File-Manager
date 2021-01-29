@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
             android:id="@+id/openwithOption"
@@ -9,6 +10,20 @@
     <item
         android:id="@+id/filePropertiesOption"
         android:title="Properties"
+        />
+
+    <item
+        android:id="@+id/toggleLinearLayoutOption"
+        android:title="Linear"
+        app:showAsAction="always"
+        android:icon="@drawable/icon_linearlayout"
+        />
+
+    <item
+        android:id="@+id/toggleGridlayoutOption"
+        android:title="Grid"
+        app:showAsAction="always"
+        android:icon="@drawable/icon_gridlayout"
         />
 
 </menu>

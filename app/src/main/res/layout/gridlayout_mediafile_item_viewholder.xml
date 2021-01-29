@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.example.filemanager.CustomViews.SquareViewGroup
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="@dimen/gridlayout_mediafile_item_padding"
+    android:background="@color/colorPrimary"
+    >
+
+        <ImageView
+            android:id="@+id/fileitem_gridlayout_Imageview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.9"
+            />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            >
+            <TextView
+                tools:text="Enter file title here"
+                android:layout_gravity="center"
+                android:id="@+id/fileitem_gridlayout_TitleTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/gridlayout_mediafile_item_title"
+                />
+        </FrameLayout>
+
+</com.example.filemanager.CustomViews.SquareViewGroup>

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -33,45 +34,74 @@ public class MediaFileAdapter extends RecyclerView.Adapter<MediaFileAdapter.View
          void onClick(BaseMediaFile item, int itemPos);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
+    static abstract class ViewHolder extends RecyclerView.ViewHolder{
 
-        ImageView iconImageView;
+        ImageView fileImageView;
         TextView fileTitleTV;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            fileTitleTV = itemView.findViewById(R.id.fileTitleTV);
-            iconImageView = itemView.findViewById(R.id.iconImageview);
         }
 
-        public void bindData(BaseMediaFile item)
-        {
+        public void setThumbnail(BaseMediaFile item){
+            Glide.with(itemView.getContext()).load(item.getUri()).into(fileImageView);
+        }
+        public void setThumbnail(int resID){
+            Glide.with(itemView.getContext()).load(resID).into(fileImageView);
+        }
+        public void bindData(BaseMediaFile item){
             fileTitleTV.setText(item.getName());
-
         }
     }
 
+    static class LinearLayoutViewHolder extends ViewHolder{
+        public LinearLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+            fileImageView = itemView.findViewById(R.id.fileItem_linearlayout_ImageView);
+            fileTitleTV = itemView.findViewById(R.id.fileitem_linearlayout_TitleTV);
+        }
+
+    }
+
+    static class GridLayoutViewHolder extends ViewHolder {
+        public GridLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+            fileImageView = itemView.findViewById(R.id.fileitem_gridlayout_Imageview);
+            fileTitleTV = itemView.findViewById(R.id.fileitem_gridlayout_TitleTV);
+        }
+    }
 
     ItemEventListener itemEventListener;
     List<BaseMediaFile> fileList;
     int longClickFilePos;
+    public static final int LINEAR_LAYOUT=0;
+    public static final int GRID_LAYOUT=1;
+    private int currentLayout;
 
-    public MediaFileAdapter(List<BaseMediaFile> fileList)
+    public MediaFileAdapter(List<BaseMediaFile> fileList, int layoutMode)
     {
         this.fileList = fileList;
         this.longClickFilePos = FILE_NOT_LONG_CLICKED;
+        this.currentLayout= (layoutMode==LINEAR_LAYOUT) ? LINEAR_LAYOUT:GRID_LAYOUT;
     }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.linearlayout_mediafile_viewholder,parent,false);
-        return new ViewHolder(itemView);
+        Log.d(TAG, "onCreateViewHolder: viewType: "+viewType);
+        if(viewType==LINEAR_LAYOUT) {
+             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.linearlayout_mediafile_viewholder, parent, false);
+            return new LinearLayoutViewHolder(itemView);
+        }
+        else{ //viewType == GRID_LAYOUT
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.gridlayout_mediafile_item_viewholder, parent, false);
+            return new GridLayoutViewHolder(itemView);
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.bindData(fileList.get(position));
         if(defaultIconIsSet())
-            Glide.with(holder.iconImageView.getContext()).load(default_icon_resID).into(holder.iconImageView);
+            holder.setThumbnail(default_icon_resID);
 
         if(itemEventListener !=null)
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -93,6 +123,11 @@ public class MediaFileAdapter extends RecyclerView.Adapter<MediaFileAdapter.View
     @Override
     public int getItemCount() {
             return (fileList!=null) ? fileList.size():0;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return currentLayout;
     }
 
     public void addItemEventListener(ItemEventListener listener)
@@ -133,10 +168,18 @@ public class MediaFileAdapter extends RecyclerView.Adapter<MediaFileAdapter.View
     public boolean defaultIconIsSet(){
         return default_icon_resID!=-1;
     }
-    
+
     public BaseMediaFile getLongClickedFile(){
         return (longClickFilePos==FILE_NOT_LONG_CLICKED)? null: fileList.get(longClickFilePos);
     }
-    
+    public void setLayoutMode(int layoutMode){
+        currentLayout = (layoutMode==LINEAR_LAYOUT) ? LINEAR_LAYOUT:GRID_LAYOUT;
+    }
+
+    public boolean isGridMode(){
+        return currentLayout==GRID_LAYOUT;
+    }
+
+
 
 }
