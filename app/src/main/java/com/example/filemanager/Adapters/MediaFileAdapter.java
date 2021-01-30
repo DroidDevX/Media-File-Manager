@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,7 +44,7 @@ public class MediaFileAdapter extends RecyclerView.Adapter<MediaFileAdapter.View
         }
 
         public void setThumbnail(BaseMediaFile item){
-            Glide.with(itemView.getContext()).load(item.getUri()).into(fileImageView);
+            Glide.with(itemView.getContext()).load(item.getUri()).centerCrop().into(fileImageView);
         }
         public void setThumbnail(int resID){
             Glide.with(itemView.getContext()).load(resID).into(fileImageView);
@@ -100,8 +101,10 @@ public class MediaFileAdapter extends RecyclerView.Adapter<MediaFileAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.bindData(fileList.get(position));
-        if(defaultIconIsSet())
+        if(defaultIconIsSet() && holder instanceof LinearLayoutViewHolder)
             holder.setThumbnail(default_icon_resID);
+        else if (holder instanceof GridLayoutViewHolder)
+            holder.setThumbnail(fileList.get(position));
 
         if(itemEventListener !=null)
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
