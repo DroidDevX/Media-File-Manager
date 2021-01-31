@@ -105,9 +105,55 @@ Add a button to toggle FileDetailActivity's recyclerview layout manager between 
              input parameter is true else default background color
    
     - Research: solutions on how to acess MediaFile thumbnails, so they can be displayed at a later stage implement and test (+ 3 Hours ?)
+     (Done)
       
+New feature: Add multithreading code in the viewmodel, so that any access to the repository from the viewmodel is done in the background. Core operations include: read/write opertations to & from external storage. read/write operations to & from internal storage      
      
+New feature: Add a bottom navigation to switch between External storage (SharedFolderActivity.java) and
+internal storage
 
+Maintenance: Refactor SharedFoldersActivity.java to SharedStorageFragment (AppcompatActivity->Fragment), then
+ - Create a new activities (Splashscreen activity, HomeActivity)
+ 
+ - SplashScreenActivity.java 
+    - Add icon to activity, and a fading transition into HomeActivity.java
+ 
+ - HomeActivity should contain a viewpager that syncs with bottom navigation UI component. The navigator allows the user
+   to switch between SharedStorageFragment.java and InternalStorageFragment.java(to be implemented)
+    - Add the bottomNavigation with relevant icons, and add InternalStorageFragment.java. Implement navigation logic
+     for the bottomNavigation so you can switch between fragments
+
+
+New feature: Provide the implemtation details for InternalStorageFragment.java which will
+ - Display folders or files in a recyclerview layout. (Toggle between GridlayoutManager and LinearLayoutManager)
+ 
+ 	- Implement the UI for InternalStorageFragment.java to display the 
+ 		- Create the recyclerview layout (uses LinearLayoutManager) to display List<Files)
+ 		- Create the Adapter for the recyclerview that will display the List<Files>
+ 		  - For each File, display a File icon in the viewholder layout if there is no extension and, display
+ 		    thumbnail if (a mediafile), display pdf icon if  pdf file etc. (Use FileIconBuilder)
+ 		      - Create a FileIconBuilder.class which returns a icon based on the string file extension,
+ 		- Create a contextual menu that will allow the user to
+ 		  - switch between LinearLayoutManager and GridLayoutManager
+ 		  - launch mediafiles using appchooser
+ 		  - launch TextFileActivity.java (if .txt file)
+ 		  - check file properties
+ 		  - Add the icon assets to the contextual menu without implementing the onClick() event
+ 		    handlers
+ 
+ 	- Implement the backend logic to aquire the list of files in the top level directory in internal storage.
+ 	   -Create a class called InternalFileStorage.java which will be the DAO.
+ 	     (create Method -> +public List<File> getFiles())
+ 	   -Add InternalFileStorage.java to Repository as a dependency.
+ 	   -Add accessor in Repository that will allow viewmodel to access List<File> from internal storage given
+ 	    the target directory.
+ 	   -Add a method in the viewmodel that access internal storage files from the repository on a background thread
+ 	   -Test accessor: in InternalStorageFragment.java, create a method to test access to files in internal storage
+ 	     ->Btn click -> onClick() -> internalStorageViewModel.getFiles() -> data (List<File>) returned as livedata   
+ 	      
+ 	
+   
+           	-
    
 
 
