@@ -2,6 +2,7 @@ package com.example.filemanager.Activities;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,12 +11,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,21 +37,18 @@ import java.util.List;
  * Displays media folders that are publicly accessible to all apps on the Android device.
  * Namely : Audio, Image, Video and Documents
  * */
-public class SharedFoldersActivity extends AppCompatActivity {
+public class ExternalStorageFragment extends Fragment {
     private static final String TAG = "SharedFoldersActivity";
 
     RecyclerView fileRecyclerView;
     SharedFoldersAdapter fileAdapter;
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shared_folders);
-
-        setTitle("Shared Folders");
-
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view =inflater.inflate(R.layout.fragment_external_storage,container,false);
         fileAdapter = new SharedFoldersAdapter(createDefaultFolders());
-        setupRecyclerView();
+        setupRecyclerView(view);
+        return view;
     }
 
     public List<SharedFolder> createDefaultFolders(){
@@ -57,7 +60,7 @@ public class SharedFoldersActivity extends AppCompatActivity {
         return folders;
     }
 
-    public void setupRecyclerView(){
+    public void setupRecyclerView(View fragmentView){
 
         fileAdapter.setOnClickListener(new SharedFoldersAdapter.FolderOnClickListener() {
             @Override
@@ -66,16 +69,16 @@ public class SharedFoldersActivity extends AppCompatActivity {
                 if(folder.getIconID()==R.drawable.icon_document)
                     createFilePickerAlertDialog();
                 else{
-                    Intent i = new Intent(getApplicationContext(),FolderDetailActivity.class);
+                    Intent i = new Intent(getActivity(),FolderDetailActivity.class);
                     i.putExtra(FolderDetailActivity.INTENT_EXTRA_APPBAR_ICON,folder.getIconID());
                     startActivity(i);
                 }
             }
         });
 
-        fileRecyclerView = findViewById(R.id.fileRecyclerview);
+        fileRecyclerView = fragmentView.findViewById(R.id.fileRecyclerview);
         fileRecyclerView.setAdapter(fileAdapter);
-        fileRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        fileRecyclerView.setLayoutManager(new LinearLayoutManager(fragmentView.getContext()));
     }
 
     public static final int REQUEST_DOCUMENT_FILE=100;
@@ -88,7 +91,7 @@ public class SharedFoldersActivity extends AppCompatActivity {
             return;
 
         File[] externalStorageVolumes =
-                ContextCompat.getExternalFilesDirs(getApplicationContext(), null);
+                ContextCompat.getExternalFilesDirs(getActivity().getApplicationContext(), null);
         File primaryExternalStorage = externalStorageVolumes[0];
 
 
@@ -105,7 +108,7 @@ public class SharedFoldersActivity extends AppCompatActivity {
     public void createFilePickerAlertDialog(){
         String message ="The system file picker will now open. Select a document from the picker to proceed. You will then be prompted with" +
                 " an app-chooser to select an app to open the selected file.";
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getActivity())
                 .setTitle("Open Document")
                 .setMessage(message)
                 .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
@@ -119,7 +122,7 @@ public class SharedFoldersActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent resultData) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent resultData) {
 
         Log.d(TAG, "onActivityResult: ");
         super.onActivityResult(requestCode,resultCode,resultData);
@@ -143,7 +146,7 @@ public class SharedFoldersActivity extends AppCompatActivity {
         Log.e(TAG, "openFile: uri path ->"+uri.getPath());
         //Get MIMEType
         MimeTypeMap mime = MimeTypeMap.getSingleton();
-        String type = "application/"+mime.getExtensionFromMimeType(getContentResolver().getType(uri));
+        String type = "application/"+mime.getExtensionFromMimeType(getActivity().getContentResolver().getType(uri));
         Log.e(TAG,"MIME TYPE ->:"+type);
         Intent target = new Intent(Intent.ACTION_VIEW);
         target.setData(uri);
@@ -164,7 +167,7 @@ public class SharedFoldersActivity extends AppCompatActivity {
         // The query, because it only applies to a single document, returns only
         // one row. There's no need to filter, sort, or select fields,
         // because we want all fields for one document.
-        Cursor cursor = this.getContentResolver()
+        Cursor cursor = getActivity().getContentResolver()
                 .query(uri, null, null, null, null, null);
 
         try {
