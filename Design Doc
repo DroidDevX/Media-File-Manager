@@ -107,7 +107,7 @@ Add a button to toggle FileDetailActivity's recyclerview layout manager between 
     - Research: solutions on how to acess MediaFile thumbnails, so they can be displayed at a later stage implement and test (+ 3 Hours ?)
      (Done)
       
-New feature: Add multithreading code in the viewmodel, so that any access to the repository from the viewmodel is done in the background. Core operations include: read/write opertations to & from external storage. read/write operations to & from internal storage      
+New feature: Add multithreading code in the viewmodel, so that any access to the repository from the viewmodel is done in the background. Core operations include: read/write opertations to & from external storage. read/write operations to & from internal storage (Done)     
      
 New feature: Add a bottom navigation to switch between External storage (SharedFolderActivity.java) and
 internal storage

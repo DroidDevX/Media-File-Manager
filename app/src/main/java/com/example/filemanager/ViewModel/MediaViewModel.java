@@ -7,6 +7,7 @@ import android.util.SparseIntArray;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.filemanager.Async.LocalExecutors;
 import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 import com.example.filemanager.Data.MediaStore.MediaRepository;
 
@@ -48,17 +49,29 @@ public class MediaViewModel extends ViewModel {
      Result is set as LiveData get files by invoking getFilesLiveData()
      * @param mediaFolder Target folder in shared storage (Audio, Video, Image, Document and downloads)
      * */
-    public void getFiles(int mediaFolder){
+    public void getFiles(final int mediaFolder){
         Log.d(TAG, "getFiles: ");
-        int FOLDER_NOT_FOUND=-1;
+        final int FOLDER_NOT_FOUND=-1;
 
-        if(mediaStoreTypeMap.get(mediaFolder,-1)!=FOLDER_NOT_FOUND) {
-            List<BaseMediaFile> baseMediaFiles =repository.getMediaStore(mediaFolder).getFiles();
-            Log.d(TAG, "getFiles: , media files ="+ baseMediaFiles.toString());
-            filesLiveData.setValue(baseMediaFiles);
-        }
-        else
-            Log.e(TAG, "getFiles: , FILE NOT FOUND, mediaFolder int = " +mediaFolder );
+        LocalExecutors.getInstance().singleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                if(mediaStoreTypeMap.get(mediaFolder,-1)!=FOLDER_NOT_FOUND) {
+                    final List<BaseMediaFile> baseMediaFiles =repository.getMediaStore(mediaFolder).getFiles();
+                    Log.d(TAG, "getFiles: , media files ="+ baseMediaFiles.toString());
+                    LocalExecutors.getInstance().UIThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            filesLiveData.setValue(baseMediaFiles);
+                        }
+                    });
+                }
+                else
+                    Log.e(TAG, "getFiles: , FILE NOT FOUND, mediaFolder int = " +mediaFolder );
+            }
+        });
+
 
     }
 
