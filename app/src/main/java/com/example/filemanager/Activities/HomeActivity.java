@@ -18,22 +18,19 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
+
             setContentView(R.layout.activity_home);
-        }catch (Exception e){
-            Log.e(TAG,"Error: "+e.toString());
-        }
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_external_storage)
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.internalStorageFragment,
+                R.id.externalStorageFragment)
                 .build();
-        try {
+
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_container);
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
             NavigationUI.setupWithNavController(navView, navController);
-        }catch (Exception e){
-            Log.e(TAG,"NavigationUI err -> "+e.toString());
-        }
+
 
 
     }
