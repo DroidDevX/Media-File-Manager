@@ -110,18 +110,15 @@ Add a button to toggle FileDetailActivity's recyclerview layout manager between 
 New feature: Add multithreading code in the viewmodel, so that any access to the repository from the viewmodel is done in the background. Core operations include: read/write opertations to & from external storage. read/write operations to & from internal storage (Done)     
      
 New feature: Add a bottom navigation to switch between External storage (SharedFolderActivity.java) and
-internal storage
+internal storage (Done)
 
 Maintenance: Refactor SharedFoldersActivity.java to SharedStorageFragment (AppcompatActivity->Fragment), then
- - Create a new activities (Splashscreen activity, HomeActivity)
+ - Create a new activities (Splashscreen activity, HomeActivity) (Done)
  
- - SplashScreenActivity.java 
+ - SplashScreenActivity.java (Done)
     - Add icon to activity, and a fading transition into HomeActivity.java
  
- - HomeActivity should contain a viewpager that syncs with bottom navigation UI component. The navigator allows the user
-   to switch between SharedStorageFragment.java and InternalStorageFragment.java(to be implemented)
-    - Add the bottomNavigation with relevant icons, and add InternalStorageFragment.java. Implement navigation logic
-     for the bottomNavigation so you can switch between fragments
+
 
 
 New feature: Provide the implemtation details for InternalStorageFragment.java which will
