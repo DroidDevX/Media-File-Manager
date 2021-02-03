@@ -11,11 +11,11 @@
     <com.example.filemanager.CustomViews.SplashScreenImage
         android:id="@+id/splashScreenImageview"
         android:background="@mipmap/splashscreen_img"
-        android:scaleType="centerCrop"
+        android:scaleType="fitXY"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintWidth_percent="0.5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

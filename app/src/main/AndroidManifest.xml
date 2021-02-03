@@ -18,8 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.FolderDetailActivity">
-        </activity>
+        <activity android:name=".Activities.FolderDetailActivity"/>
+        <activity android:name=".Activities.HomeActivity"/>
     </application>
 
 </manifest>
