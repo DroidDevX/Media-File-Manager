@@ -98,7 +98,11 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
 
 
     @Override
-    public void onFileClick(File f) {
+    public void onFileClick(File f)
+    {
+        Log.d(TAG, "onFileClick: ");
         //If file f is folder, then display file contents, else f is regular file -> open using app-chooser
+        if(f.isDirectory())
+            viewModel.getFiles(f.getAbsolutePath());
     }
 }

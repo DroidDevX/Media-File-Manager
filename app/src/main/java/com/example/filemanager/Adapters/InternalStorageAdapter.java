@@ -109,8 +109,17 @@ public class InternalStorageAdapter extends RecyclerView.Adapter<InternalStorage
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Viewholder holder, int position) {
+    public void onBindViewHolder(@NonNull Viewholder holder, final int position) {
         holder.bindData(fileList.get(position));
+        if(listener!=null)
+        {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onFileClick(fileList.get(position));
+                }
+            });
+        }
     }
 
     @Override
