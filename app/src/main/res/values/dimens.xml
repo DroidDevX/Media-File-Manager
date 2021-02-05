@@ -20,6 +20,9 @@
     <dimen name="gridlayout_mediafile_item_title">18sp</dimen>
     <dimen name="gridlayout_mediafile_item_padding">4dp</dimen>
 
+    <dimen name="gridlayout_internalstorage_fileItemTitle">16sp</dimen>
+    <dimen name="gridlayout_internalstorage_fileItemPadding">8dp</dimen>
+
     <!--SPLASH SCREEN.png DIMENS-->
     <!--mipmap-hdpi-->
     <dimen name="splashscreen_img_portrait_margin_hdpi">8dp</dimen>

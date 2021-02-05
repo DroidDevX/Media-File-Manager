@@ -13,7 +13,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.filemanager.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity  {
     private static final String TAG = "HomeActivity";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
