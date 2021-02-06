@@ -30,6 +30,10 @@ public class InternalStorageViewModel extends ViewModel {
         currentFolderPath.setValue(path);
     }
 
+    public String getCurrentFolderPath(){
+        return currentFolderPath.getValue();
+    }
+
     public LiveData<String> getCurrentFolderPath_LiveData(){
         Log.d(TAG, "getCurrentFolderPath_LiveData: ");
         return currentFolderPath;
