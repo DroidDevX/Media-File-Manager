@@ -39,6 +39,7 @@ public class FolderActivity extends AppCompatActivity {
 
     public void setupViewmodel(String parentDirectoryPath){
         viewModel = new InternalStorageViewModel(InternalStorageRepository.getInstance(),parentDirectoryPath);
+        fileAdapter = new InternalStorageAdapter();
         viewModel.getFileListLiveData().observe(this, new Observer<List<File>>() {
             @Override
             public void onChanged(List<File> files) {

@@ -1,6 +1,7 @@
 package com.example.filemanager.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -103,6 +104,10 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
         Log.d(TAG, "onFileClick: ");
         //If file f is folder, then display file contents, else f is regular file -> open using app-chooser
         if(f.isDirectory())
-            viewModel.getFiles(f.getAbsolutePath());
+        {
+            Intent i = new Intent(getContext(),FolderActivity.class);
+            i.putExtra(FolderActivity.ACTION_DISPLAY_DIRECTORY_CONTENTS,f.getAbsolutePath());
+            startActivity(i);
+        }
     }
 }
