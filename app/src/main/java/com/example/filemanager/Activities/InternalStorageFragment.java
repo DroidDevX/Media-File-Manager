@@ -107,6 +107,7 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
         {
             Intent i = new Intent(getContext(),FolderActivity.class);
             i.putExtra(FolderActivity.ACTION_DISPLAY_DIRECTORY_CONTENTS,f.getAbsolutePath());
+            i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(i);
         }
     }
