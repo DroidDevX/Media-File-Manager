@@ -128,8 +128,8 @@ New feature: Provide the implemtation details for InternalStorageFragment.java w
  		- Create the recyclerview layout (uses LinearLayoutManager) to display List<Files) (Done)
  		- Create the Adapter for the recyclerview that will display the List<Files> (Done)
  		  - For each File, display a File icon in the viewholder layout if there is no extension and, display
- 		    thumbnail if (a mediafile), display pdf icon if  pdf file etc. (Use FileIconBuilder)
- 		      - Create a FileIconBuilder.class which returns a icon based on the string file extension,
+ 		    thumbnail if (a mediafile), display pdf icon if  pdf file etc. (Use FileIconBuilder) (Done)
+ 		    
  		- Create a contextual menu that will allow the user to
  		  - switch between LinearLayoutManager and GridLayoutManager
  		  - launch mediafiles using appchooser
@@ -144,7 +144,7 @@ New feature: Provide the implemtation details for InternalStorageFragment.java w
  	   -Add  Repository to that will help access data needed by InternalFileStorage.java (Done)
  	   -Add accessor in Repository that will allow viewmodel to access List<File> from internal storage given
  	    the target directory. (Done)
- 	   -Add a method in the viewmodel that access internal storage files from the repository on a background thread
+ 	   -Add a method in the viewmodel that access internal storage files from the repository on a background thread (Done)
  	   -Test accessor: in InternalStorageFragment.java, create a method to test access to files in internal storage
  	     ->Btn click -> onClick() -> internalStorageViewModel.getFiles() -> data (List<File>) returned as livedata (Done)   
  	      
