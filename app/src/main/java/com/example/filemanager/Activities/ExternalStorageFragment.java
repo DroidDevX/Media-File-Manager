@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.filemanager.Adapters.SharedFoldersAdapter;
 import com.example.filemanager.Data.SharedFolderModel.SharedFolder;
 import com.example.filemanager.R;
+import com.example.filemanager.Util.AppChooserUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -134,71 +135,12 @@ public class ExternalStorageFragment extends Fragment {
                 uri = resultData.getData();
                 // Perform operations on the document using its URI.
                 Log.e(TAG,"Result URI: "+uri.toString());
-                dumpImageMetaData(uri);
-                openFile(uri);
+                if(getContext()!=null)
+                    AppChooserUtil.openFile(getContext(),uri);
 
             }
         }
     }
 
-    public void openFile(Uri uri){
-        Log.e(TAG, "openFile: uri path ->"+uri.getPath());
-        //Get MIMEType
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        String type = "application/"+mime.getExtensionFromMimeType(getActivity().getContentResolver().getType(uri));
-        Log.e(TAG,"MIME TYPE ->:"+type);
-        Intent target = new Intent(Intent.ACTION_VIEW);
-        target.setData(uri);
 
-        //Grant URI permissions to apps opening the file
-        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY| Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        Intent intent = Intent.createChooser(target, "Open File");
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            // Instruct the user to install a PDF reader here, or something
-        }
-    }
-
-    public void dumpImageMetaData(Uri uri) {
-        Log.d(TAG, "dumpImageMetaData: ");
-        // The query, because it only applies to a single document, returns only
-        // one row. There's no need to filter, sort, or select fields,
-        // because we want all fields for one document.
-        Cursor cursor = getActivity().getContentResolver()
-                .query(uri, null, null, null, null, null);
-
-        try {
-            // moveToFirst() returns false if the cursor has 0 rows. Very handy for
-            // "if there's anything to look at, look at it" conditionals.
-            if (cursor != null && cursor.moveToFirst()) {
-
-                // Note it's called "Display Name". This is
-                // provider-specific, and might not necessarily be the file name.
-                String displayName = cursor.getString(
-                        cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                Log.i(TAG, "Display Name: " + displayName);
-
-                int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-                // If the size is unknown, the value stored is null. But because an
-                // int can't be null, the behavior is implementation-specific,
-                // and unpredictable. So as
-                // a rule, check if it's null before assigning to an int. This will
-                // happen often: The storage API allows for remote files, whose
-                // size might not be locally known.
-                String size = null;
-                if (!cursor.isNull(sizeIndex)) {
-                    // Technically the column stores an int, but cursor.getString()
-                    // will do the conversion automatically.
-                    size = cursor.getString(sizeIndex);
-                } else {
-                    size = "Unknown";
-                }
-                Log.i(TAG, "Size: " + size);
-            }
-        } finally {
-            cursor.close();
-        }
-    }
 }
