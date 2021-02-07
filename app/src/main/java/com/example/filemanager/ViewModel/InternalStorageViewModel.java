@@ -17,34 +17,31 @@ public class InternalStorageViewModel extends ViewModel {
 
     InternalStorageRepository repository;
     MutableLiveData<List<File>> fileListLiveData;
-    MutableLiveData<String> currentFolderPath;
+    String currentFolderPath;
 
     public InternalStorageViewModel(InternalStorageRepository repository, String homeDirectoryPath) {
         Log.d(TAG, "InternalStorageViewModel: ");
         fileListLiveData = new MutableLiveData<>();
         this.repository = repository;
-        this.currentFolderPath = new MutableLiveData<>();
-        currentFolderPath.setValue(homeDirectoryPath);
+        currentFolderPath =homeDirectoryPath;
     }
     public void setCurrentFolderPath(String path){
-        currentFolderPath.setValue(path);
+        getFiles(path);
+        currentFolderPath=path;
     }
 
     public String getCurrentFolderPath(){
-        return currentFolderPath.getValue();
-    }
-
-    public LiveData<String> getCurrentFolderPath_LiveData(){
-        Log.d(TAG, "getCurrentFolderPath_LiveData: ");
         return currentFolderPath;
     }
+
+
 
     public MutableLiveData<List<File>> getFileListLiveData() {
         Log.d(TAG, "getFileListLiveData: ");
         return fileListLiveData;
     }
 
-    public void getFiles(final String path){
+    private void getFiles(final String path){
         Log.d(TAG, "getFiles: ");
         LocalExecutors.getInstance().singleThreadExecutor().execute(new Runnable() {
             @Override

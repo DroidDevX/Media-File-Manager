@@ -58,13 +58,7 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
 
         LifecycleOwner lifecycleOwner = this;
         viewModel = new InternalStorageViewModel(InternalStorageRepository.getInstance(),"");
-        viewModel.getCurrentFolderPath_LiveData().observe(lifecycleOwner, new Observer<String>() {
-            @Override
-            public void onChanged(String currentFolderPath) {
-                Log.d(TAG, "onChanged:, getCurrentFolderPath_LiveData() ");
-                viewModel.getFiles(currentFolderPath);
-            }
-        });
+
 
         viewModel.getFileListLiveData().observe(lifecycleOwner, new Observer<List<File>>() {
                 @Override

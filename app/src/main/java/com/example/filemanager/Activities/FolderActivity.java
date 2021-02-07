@@ -37,8 +37,8 @@ public class FolderActivity extends AppCompatActivity implements InternalStorage
         }
     }
 
-    public void setupViewmodel(String parentDirectoryPath){
-        viewModel = new InternalStorageViewModel(InternalStorageRepository.getInstance(),parentDirectoryPath);
+    public void setupViewmodel(String path){
+        viewModel = new InternalStorageViewModel(InternalStorageRepository.getInstance(),path);
         fileAdapter = new InternalStorageAdapter();
         fileAdapter.setOnClickListener(this);
         viewModel.getFileListLiveData().observe(this, new Observer<List<File>>() {
@@ -49,14 +49,7 @@ public class FolderActivity extends AppCompatActivity implements InternalStorage
             }
         });
 
-        viewModel.getCurrentFolderPath_LiveData().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String currentFilePath) {
-                Log.d(TAG, "onChanged: ");
-                //Path of the current folder has changed, so reload UI and display contents
-                viewModel.getFiles(currentFilePath);
-            }
-        });
+        viewModel.setCurrentFolderPath(path);
     }
 
     public void setupRecyclerview(){
@@ -67,6 +60,6 @@ public class FolderActivity extends AppCompatActivity implements InternalStorage
 
     @Override
     public void onFileClick(File f) {
-        viewModel.getFiles(f.getAbsolutePath());
+        viewModel.setCurrentFolderPath(f.getAbsolutePath());
     }
 }
