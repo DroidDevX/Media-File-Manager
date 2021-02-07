@@ -20,4 +20,28 @@
     <dimen name="gridlayout_mediafile_item_title">18sp</dimen>
     <dimen name="gridlayout_mediafile_item_padding">4dp</dimen>
 
+    <dimen name="gridlayout_internalstorage_fileItemTitle">16sp</dimen>
+    <dimen name="gridlayout_internalstorage_fileItemPadding">8dp</dimen>
+
+    <!--SPLASH SCREEN.png DIMENS-->
+    <!--mipmap-hdpi-->
+    <dimen name="splashscreen_img_portrait_margin_hdpi">8dp</dimen>
+    <dimen name="splashscreen_img_landscape_margin_hdpi">16dp</dimen>
+
+    <!--mipmap-mdpi-->
+    <dimen name="splashscreen_img_portrait_margin_mdpi">8dp</dimen>
+    <dimen name="splashscreen_img_landscape_margin_mdpi">16dp</dimen>
+
+    <!--mipmap-xhdpi-->
+    <dimen name="splashscreen_img_portrait_margin_xhdpi">16dp</dimen>
+    <dimen name="splashscreen_img_landscape_margin_xhdpi">32dp</dimen>
+
+    <!--mipmap-xxhdpi-->
+    <dimen name="splashscreen_img_portrait_margin_xxhdpi">16dp</dimen>
+    <dimen name="splashscreen_img_landscape_margin_xxhdpi">32dp</dimen>
+
+    <!--mipmap-xxxhdpi-->
+    <dimen name="splashscreen_img_portrait_margin_xxxhdpi">32dp</dimen>
+    <dimen name="splashscreen_img_landscape_margin_xxxhdpi">64dp</dimen>
+
 </resources>

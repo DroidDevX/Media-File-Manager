@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FileManager</string>
+        <!-- Bottom Navigation -->
+    <string name="bottom_nav_internalstore_title">Internal Storage</string>
+    <string name="bottom_nav_externalstore_title">External Storage</string>
+
 </resources>

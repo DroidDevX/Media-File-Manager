@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory;
 import com.example.filemanager.R;
 import java.io.File;
 
-public class FileIconFactory {
+public class FileIconFactory { //TODO -> no longer used
 
     public static class FILETYPE {
         public final static String AUDIO="audio";

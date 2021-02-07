@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/bottom_navigation_graph"
+    app:startDestination="@id/internalStorageFragment">
+
+    <fragment
+        android:id="@+id/internalStorageFragment"
+        android:name="com.example.filemanager.Activities.InternalStorageFragment"
+        android:label="InternalStorageFragment" />
+
+    <fragment
+        android:id="@+id/externalStorageFragment"
+        android:name="com.example.filemanager.Activities.ExternalStorageFragment"
+        android:label="ExternalStorageFragment" />
+
+</navigation>
