@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 
 import com.example.filemanager.Adapters.InternalStorageAdapter;
@@ -61,5 +62,22 @@ public class FolderActivity extends AppCompatActivity implements InternalStorage
     @Override
     public void onFileClick(File f) {
         viewModel.setCurrentFolderPath(f.getAbsolutePath());
+    }
+
+    /**
+     * If parent directory is the home directory go back to HomeActivity using onBackPressed, else
+     * reload the UI with the parent directory contents
+     * */
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        File currentDirectory = new File (viewModel.getCurrentFolderPath());
+        if(currentDirectory.getParent()==null
+            ||currentDirectory.getParent().equals(Environment.getExternalStorageDirectory().getAbsolutePath())
+        )
+            super.onBackPressed();
+        else
+            viewModel.setCurrentFolderPath(currentDirectory.getParent());
+
     }
 }
