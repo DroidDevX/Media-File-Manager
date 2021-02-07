@@ -17,7 +17,7 @@ import com.example.filemanager.ViewModel.InternalStorageViewModel;
 import java.io.File;
 import java.util.List;
 
-public class DirectoryDetailActivity extends AppCompatActivity {
+public class FolderActivity extends AppCompatActivity {
     private static final String TAG = "InternalStorageFolderDe";
     final public static String ACTION_DISPLAY_DIRECTORY_CONTENTS ="dispDirContents";
 
