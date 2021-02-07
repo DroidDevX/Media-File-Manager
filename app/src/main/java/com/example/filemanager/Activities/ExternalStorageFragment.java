@@ -19,7 +19,6 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -69,8 +68,8 @@ public class ExternalStorageFragment extends Fragment {
                 if(folder.getIconID()==R.drawable.icon_document)
                     createFilePickerAlertDialog();
                 else{
-                    Intent i = new Intent(getActivity(),FolderDetailActivity.class);
-                    i.putExtra(FolderDetailActivity.INTENT_EXTRA_APPBAR_ICON,folder.getIconID());
+                    Intent i = new Intent(getActivity(),MediaFolderActivity.class);
+                    i.putExtra(MediaFolderActivity.INTENT_EXTRA_APPBAR_ICON,folder.getIconID());
                     startActivity(i);
                 }
             }

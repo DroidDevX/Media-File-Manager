@@ -31,7 +31,13 @@ import com.example.filemanager.ViewModel.MediaViewModel;
 import java.util.List;
 import java.util.Locale;
 
-public class FolderDetailActivity extends AppCompatActivity implements FilePropertiesDialog.DialogOnClickListener{
+/*
+* Purpose: To display contents of a media folder given the uri path from
+* getIntent(). Contents will be returned to the view via the viewmodel as instances of
+* BaseMediaFile objects. (List<BaseMediaFile>)
+*
+* */
+public class MediaFolderActivity extends AppCompatActivity implements FilePropertiesDialog.DialogOnClickListener{
 
     private static final String TAG = "FolderDetailActivity";
     //Constants
