@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/openwithOption"
+        android:title="Open"
+        android:icon="@drawable/icon_openwith"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/filePropertiesOption"
+        android:title="View Properties"
+        android:icon="@drawable/icon_properties"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/toggleLinearLayoutOption"
+        android:title="Switch to linear layout"
+        android:icon="@drawable/icon_linearlayout_black"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/toggleGridlayoutOption"
+        android:title="Switch to grid layout"
+        android:icon="@drawable/icon_gridlayout_black"
+        app:showAsAction="always"
+        />
+
+
+</menu>

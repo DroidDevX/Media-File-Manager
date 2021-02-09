@@ -2,10 +2,15 @@ package com.example.filemanager.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,18 +27,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.filemanager.Adapters.InternalStorageAdapter;
 import com.example.filemanager.Data.InternalStorageRepository.InternalStorageRepository;
 import com.example.filemanager.R;
+import com.example.filemanager.Util.AppChooserUtil;
 import com.example.filemanager.ViewModel.InternalStorageViewModel;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InternalStorageFragment extends Fragment implements InternalStorageAdapter.OnClickListener, LifecycleOwner {
+public class InternalStorageFragment extends Fragment implements InternalStorageAdapter.OnClickListener, InternalStorageAdapter.OnLongClickListener, LifecycleOwner {
     private static final String TAG = "InternalStorageFragment";
     InternalStorageViewModel viewModel;
     InternalStorageAdapter fileAdapter;
     RecyclerView recyclerView;
-
+    ActionMode actionMode;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -78,6 +84,7 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
     public void setupFileAdapter(){
         fileAdapter = new InternalStorageAdapter();
         fileAdapter.setOnClickListener(this);
+        fileAdapter.setOnLongClickListener(this);
     }
 
     public void setupFileRecyclerview(View rootview){
@@ -104,5 +111,66 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
             i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(i);
         }
+    }
+
+    @Override
+    public void onFileLongClick(final File f) {
+        if(actionMode!=null)
+            return;
+
+        if(getActivity()==null || getContext()==null)
+            return;
+
+        final Context context = getContext();
+
+        actionMode = getActivity().startActionMode(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.internal_storage_context_menu,menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                Log.d(TAG, "onActionItemClicked: ");
+                switch (item.getItemId()){
+                    case R.id.openwithOption:
+                        Log.d(TAG, "onActionItemClicked: , openwithOption");
+                        if(!f.isDirectory()) //file is ordinary file not directory
+                            AppChooserUtil.openFile(context,Uri.parse(f.getAbsolutePath()));
+                        break;
+                    case R.id.filePropertiesOption:
+                        Log.d(TAG, "onActionItemClicked: , filePropertiesOption");
+                        //display method argument File f properties in alert dialog
+                        break;
+
+                    case R.id.toggleLinearLayoutOption:
+                        Log.d(TAG, "onActionItemClicked: , toggleLinearLayoutOption");
+                        fileAdapter.setLayoutmode(InternalStorageAdapter.LINEARLAYOUT_MODE);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                        break;
+
+                    case R.id.toggleGridlayoutOption:
+                        Log.d(TAG, "onActionItemClicked: , toggleGridlayoutOption");
+                        fileAdapter.setLayoutmode(InternalStorageAdapter.GRIDLAYOUT_MODE);
+                        recyclerView.setLayoutManager(new GridLayoutManager(context,4));
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                actionMode = null;
+            }
+        });
     }
 }

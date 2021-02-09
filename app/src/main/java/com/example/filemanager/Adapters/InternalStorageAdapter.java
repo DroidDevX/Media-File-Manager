@@ -2,6 +2,7 @@ package com.example.filemanager.Adapters;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ public class InternalStorageAdapter extends RecyclerView.Adapter<InternalStorage
 
     OnClickListener listener;
     List<File> fileList;
+    OnLongClickListener longClickListener;
+    ActionMode actionMode;
 
 
     public InternalStorageAdapter() {
@@ -35,10 +38,14 @@ public class InternalStorageAdapter extends RecyclerView.Adapter<InternalStorage
     public interface OnClickListener{
         void onFileClick(File f);
     }
+    public interface OnLongClickListener{
+        void onFileLongClick(File f);
+    }
 
     public void setOnClickListener(OnClickListener listener){
         this.listener= listener;
     }
+    public void setOnLongClickListener(OnLongClickListener listener){this.longClickListener = listener;}
 
     public void setFileList(List<File> fileList){
         this.fileList = fileList;
@@ -117,6 +124,16 @@ public class InternalStorageAdapter extends RecyclerView.Adapter<InternalStorage
                 @Override
                 public void onClick(View v) {
                     listener.onFileClick(fileList.get(position));
+                }
+            });
+        }
+
+        if(longClickListener!=null){
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    longClickListener.onFileLongClick(fileList.get(position));
+                    return true;
                 }
             });
         }
