@@ -16,8 +16,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -25,13 +25,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.filemanager.Adapters.InternalStorageAdapter;
+import com.example.filemanager.CustomViews.FilePropertiesDialog;
 import com.example.filemanager.Data.InternalStorageRepository.InternalStorageRepository;
 import com.example.filemanager.R;
 import com.example.filemanager.Util.AppChooserUtil;
 import com.example.filemanager.ViewModel.InternalStorageViewModel;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class InternalStorageFragment extends Fragment implements InternalStorageAdapter.OnClickListener, InternalStorageAdapter.OnLongClickListener, LifecycleOwner {
@@ -114,7 +114,7 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
     }
 
     @Override
-    public void onFileLongClick(final File f) {
+    public void onFileLongClick(final File selectedFile) {
         if(actionMode!=null)
             return;
 
@@ -142,12 +142,12 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
                 switch (item.getItemId()){
                     case R.id.openwithOption:
                         Log.d(TAG, "onActionItemClicked: , openwithOption");
-                        if(!f.isDirectory()) //file is ordinary file not directory
-                            AppChooserUtil.openFile(context,Uri.parse(f.getAbsolutePath()));
+                        if(!selectedFile.isDirectory()) //file is ordinary file not directory
+                            AppChooserUtil.openFile(context,Uri.parse(selectedFile.getAbsolutePath()));
                         break;
                     case R.id.filePropertiesOption:
                         Log.d(TAG, "onActionItemClicked: , filePropertiesOption");
-                        //display method argument File f properties in alert dialog
+                        displayFilePropertiesDialog(selectedFile);
                         break;
 
                     case R.id.toggleLinearLayoutOption:
@@ -173,4 +173,10 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
             }
         });
     }
+    public void displayFilePropertiesDialog(File file){
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+        ft.replace(R.id.dialogContainer, FilePropertiesDialog.createDialogFromFile(file));
+        ft.commit();
+    }
+
 }

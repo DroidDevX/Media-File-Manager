@@ -22,7 +22,7 @@ import android.view.MenuItem;
 import android.webkit.MimeTypeMap;
 
 import com.example.filemanager.Adapters.MediaFileAdapter;
-import com.example.filemanager.CustomViews.FilePropertiesDialog;
+import com.example.filemanager.CustomViews.MediaPropertiesDialog;
 import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 import com.example.filemanager.Data.MediaStore.MediaRepository;
 import com.example.filemanager.R;
@@ -37,7 +37,7 @@ import java.util.Locale;
 * BaseMediaFile objects. (List<BaseMediaFile>)
 *
 * */
-public class MediaFolderActivity extends AppCompatActivity implements FilePropertiesDialog.DialogOnClickListener{
+public class MediaFolderActivity extends AppCompatActivity implements MediaPropertiesDialog.DialogOnClickListener{
 
     private static final String TAG = "FolderDetailActivity";
     //Constants
@@ -128,7 +128,7 @@ public class MediaFolderActivity extends AppCompatActivity implements FileProper
     public void displayFileProperties(BaseMediaFile file){
         Log.d(TAG, "displayFileProperties: "+file.toString());
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.dialogContainer,FilePropertiesDialog.createDialogFromFile(file));
+        ft.replace(R.id.dialogContainer, MediaPropertiesDialog.createDialogFromFile(file));
         ft.commit();
     }
 

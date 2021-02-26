@@ -11,34 +11,27 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.filemanager.Data.MediaStore.BaseMediaFile;
 
-import java.io.File;
-import java.util.Date;
-
-public class FilePropertiesDialog extends DialogFragment {
+public class MediaPropertiesDialog extends DialogFragment {
     private static final String TAG = "FilePropertiesDialog";
+
     private static String DIALOG_MESSAGE_ARG ="init_arguments";
 
 
-    public static FilePropertiesDialog createDialogFromFile(File file){
+    public interface DialogOnClickListener{
+        void fileDialogOnBackClicked();
+    }
+
+
+
+    DialogOnClickListener dialogListener;
+
+    public static MediaPropertiesDialog createDialogFromFile(BaseMediaFile file){
         Log.d(TAG, "createDialogFromFile: ");
-        FilePropertiesDialog dialog = new FilePropertiesDialog();
+        MediaPropertiesDialog dialog = new MediaPropertiesDialog();
         Bundle args = new Bundle();
-        String filePath = file.getAbsolutePath();
-        String fileType;
-        if(!file.isDirectory()){
-            fileType  = file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf("."));
-        }
-        else
-            fileType = "Directory";
-
-        String fileProperties = new StringBuilder().append("File Properties \n\n")
-                                .append("Title: ").append(file.getName()).append("\n")
-                                .append("Date modified: ").append(new Date(file.lastModified())).append("\n")
-                                .append("Size: ").append(file.length()/1024).append("KB \n")
-                                .append("Type: ").append(fileType).toString();
-
-        args.putString(DIALOG_MESSAGE_ARG,fileProperties);
+        args.putString(DIALOG_MESSAGE_ARG,file.toString());
         dialog.setArguments(args);
         return dialog;
     }
@@ -61,11 +54,11 @@ public class FilePropertiesDialog extends DialogFragment {
 
         else {
             Log.d(TAG, "Creating alert dialog...");
-            if(getActivity()!=null)
-                new AlertDialog.Builder(getActivity())
+           new AlertDialog.Builder((Context) dialogListener)
                     .setMessage(getArguments().getString(DIALOG_MESSAGE_ARG))
                     .setPositiveButton("Back", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                            dialogListener.fileDialogOnBackClicked();
                             dismiss();
                         }
                     }).create().show();
@@ -76,5 +69,10 @@ public class FilePropertiesDialog extends DialogFragment {
     public void onAttach(@NonNull Context activity) {
         super.onAttach(activity);
         Log.d(TAG, "onAttach: ");
+        if(activity instanceof DialogOnClickListener)
+            this.dialogListener = (DialogOnClickListener) activity;
+
+
     }
+
 }

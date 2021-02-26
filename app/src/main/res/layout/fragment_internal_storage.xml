@@ -6,6 +6,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp">
 
+    <FrameLayout
+        android:id="@+id/dialogContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fileRecyclerview"
         android:layout_width="match_parent"
