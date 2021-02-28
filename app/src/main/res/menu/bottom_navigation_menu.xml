@@ -5,12 +5,16 @@
     <item
         android:id="@+id/internalStorageFragment"
         android:icon="@drawable/icon_internal_storage"
-        android:title="@string/bottom_nav_internalstore_title" />
+        android:title="@string/bottom_nav_internalstore_title"
+        android:enabled="true"
+        />
 
     <item
         android:id="@+id/externalStorageFragment"
         android:icon="@drawable/icon_external_storage"
-        android:title="@string/bottom_nav_externalstore_title" />
+        android:title="@string/bottom_nav_externalstore_title"
+        android:enabled="true"
+        />
 
 
 </menu>

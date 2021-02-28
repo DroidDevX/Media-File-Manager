@@ -6,11 +6,15 @@
     <fragment
         android:id="@+id/internalStorageFragment"
         android:name="com.example.filemanager.Activities.InternalStorageFragment"
-        android:label="InternalStorageFragment" />
+        android:label="InternalStorageFragment"
+        android:enabled ="true"
+        />
 
     <fragment
         android:id="@+id/externalStorageFragment"
         android:name="com.example.filemanager.Activities.ExternalStorageFragment"
-        android:label="ExternalStorageFragment" />
+        android:label="ExternalStorageFragment"
+        android:enabled ="true"
+        />
 
 </navigation>

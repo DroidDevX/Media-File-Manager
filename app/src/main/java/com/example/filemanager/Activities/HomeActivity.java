@@ -2,7 +2,9 @@ package com.example.filemanager.Activities;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -13,7 +15,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.filemanager.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class HomeActivity extends AppCompatActivity  {
+public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "HomeActivity";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,7 +33,19 @@ public class HomeActivity extends AppCompatActivity  {
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
             NavigationUI.setupWithNavController(navView, navController);
 
+        navView.setOnNavigationItemSelectedListener(this);
 
 
+    }
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Log.e(TAG, "onNavigationItemSelected: ");
+        switch (item.getItemId()){
+            case R.id.externalStorageFragment:
+                if(InternalStorageFragment.actionMode!=null)
+                    InternalStorageFragment.actionMode.finish();
+                break;
+        }
+        return true;
     }
 }
