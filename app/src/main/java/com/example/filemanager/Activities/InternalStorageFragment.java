@@ -39,7 +39,7 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
     InternalStorageViewModel viewModel;
     InternalStorageAdapter fileAdapter;
     RecyclerView recyclerView;
-    ActionMode actionMode;
+    public static ActionMode actionMode;
 
     @Override
     public void onAttach(@NonNull Context context) {
