@@ -39,7 +39,7 @@ public class InternalStorageAdapter extends RecyclerView.Adapter<InternalStorage
         void onFileClick(File f);
     }
     public interface OnLongClickListener{
-        void onFileLongClick(File f);
+        void onFileLongClick(File f, int FilePos);
     }
 
     public void setOnClickListener(OnClickListener listener){
@@ -132,7 +132,7 @@ public class InternalStorageAdapter extends RecyclerView.Adapter<InternalStorage
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    longClickListener.onFileLongClick(fileList.get(position));
+                    longClickListener.onFileLongClick(fileList.get(position),position);
                     return true;
                 }
             });
@@ -142,6 +142,10 @@ public class InternalStorageAdapter extends RecyclerView.Adapter<InternalStorage
     @Override
     public int getItemCount() {
         return (fileList ==null|| fileList.size()==0)? 0: fileList.size();
+    }
+
+    public File getFile (int pos){
+        return (pos >=0  && pos < fileList.size()) ? null:fileList.get(pos);
     }
 
 }
