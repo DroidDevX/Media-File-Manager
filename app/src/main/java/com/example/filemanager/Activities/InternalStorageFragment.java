@@ -191,7 +191,8 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                actionMode = null;
+                Log.e(TAG, "onDestroyActionMode: ");
+                actionMode =null;
             }
         });
     }

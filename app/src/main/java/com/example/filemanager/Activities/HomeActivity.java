@@ -48,4 +48,10 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         }
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        Log.e(TAG, "onBackPressed: ");
+        super.onBackPressed();
+    }
 }

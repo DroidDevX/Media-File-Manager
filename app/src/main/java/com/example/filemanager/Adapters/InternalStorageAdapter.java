@@ -144,4 +144,8 @@ public class InternalStorageAdapter extends RecyclerView.Adapter<InternalStorage
         return (fileList ==null|| fileList.size()==0)? 0: fileList.size();
     }
 
+    public File getFile (int pos){
+        return (pos >=0  && pos < fileList.size()) ? null:fileList.get(pos);
+    }
+
 }
