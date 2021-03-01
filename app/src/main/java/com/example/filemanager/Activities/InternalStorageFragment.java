@@ -1,5 +1,6 @@
 package com.example.filemanager.Activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -36,6 +37,8 @@ import java.util.List;
 
 public class InternalStorageFragment extends Fragment implements InternalStorageAdapter.OnClickListener, InternalStorageAdapter.OnLongClickListener, LifecycleOwner {
     private static final String TAG = "InternalStorageFragment";
+    private static final String BUNDLE_ARG_LAST_FILE_SELECTED_POS="lastFileSelectedPos";
+    int LAST_FILE_SELECTED_POS;
     InternalStorageViewModel viewModel;
     InternalStorageAdapter fileAdapter;
     RecyclerView recyclerView;
@@ -49,7 +52,18 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: ");
         View rootView = inflater.inflate(R.layout.fragment_internal_storage,container,false);
+        if(savedInstanceState!=null)
+        {
+            Log.e(TAG,"Saved Instance state not null");
+            LAST_FILE_SELECTED_POS = savedInstanceState.getInt(BUNDLE_ARG_LAST_FILE_SELECTED_POS);
+            Log.e(TAG,"Last selected Pos: " + savedInstanceState.getInt(BUNDLE_ARG_LAST_FILE_SELECTED_POS));
+        }
+        else {
+            Log.e(TAG, "Last file selected pos not set");
+            LAST_FILE_SELECTED_POS=-1;
+        }
         setupViewModel();
         setupFileAdapter();
         setupFileRecyclerview(rootView);
@@ -75,6 +89,10 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
                         Log.d(TAG,"File is directory? ->"+f.isDirectory());
                     }
                     fileAdapter.setFileList(fileList);
+                    if(LAST_FILE_SELECTED_POS!=-1 && getActivity()!=null){ //file was previously selected, open context menu
+                        actionMode = createActionModeCallback(getActivity(),fileList.get(LAST_FILE_SELECTED_POS));
+                    }
+
 
                 }
             });
@@ -114,16 +132,20 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
     }
 
     @Override
-    public void onFileLongClick(final File selectedFile) {
+    public void onFileLongClick(final File selectedFile, int filePos) {
         if(actionMode!=null)
             return;
 
         if(getActivity()==null || getContext()==null)
             return;
 
-        final Context context = getContext();
+        actionMode = createActionModeCallback(getActivity(),selectedFile);
+        LAST_FILE_SELECTED_POS = filePos;
+    }
 
-        actionMode = getActivity().startActionMode(new ActionMode.Callback() {
+    ActionMode createActionModeCallback(final Activity activity,final File selectedFile){
+        Log.e(TAG, "createActionModeCallback: ");
+        return  activity.startActionMode(new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
@@ -143,7 +165,7 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
                     case R.id.openwithOption:
                         Log.d(TAG, "onActionItemClicked: , openwithOption");
                         if(!selectedFile.isDirectory()) //file is ordinary file not directory
-                            AppChooserUtil.openFile(context,Uri.parse(selectedFile.getAbsolutePath()));
+                            AppChooserUtil.openFile(activity,Uri.parse(selectedFile.getAbsolutePath()));
                         break;
                     case R.id.filePropertiesOption:
                         Log.d(TAG, "onActionItemClicked: , filePropertiesOption");
@@ -153,13 +175,13 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
                     case R.id.toggleLinearLayoutOption:
                         Log.d(TAG, "onActionItemClicked: , toggleLinearLayoutOption");
                         fileAdapter.setLayoutmode(InternalStorageAdapter.LINEARLAYOUT_MODE);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         break;
 
                     case R.id.toggleGridlayoutOption:
                         Log.d(TAG, "onActionItemClicked: , toggleGridlayoutOption");
                         fileAdapter.setLayoutmode(InternalStorageAdapter.GRIDLAYOUT_MODE);
-                        recyclerView.setLayoutManager(new GridLayoutManager(context,4));
+                        recyclerView.setLayoutManager(new GridLayoutManager(activity,4));
                         break;
                     default:
                         return false;
@@ -179,4 +201,16 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
         ft.commit();
     }
 
+    @Override
+    public void onDestroy() {
+        Log.e(TAG, "onDestroy: ");
+        super.onDestroy();
+        actionMode =null;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(BUNDLE_ARG_LAST_FILE_SELECTED_POS,LAST_FILE_SELECTED_POS);
+        super.onSaveInstanceState(outState);
+    }
 }

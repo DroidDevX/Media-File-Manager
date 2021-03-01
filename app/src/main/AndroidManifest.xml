@@ -21,7 +21,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.MediaFolderActivity" />
-        <activity android:name=".Activities.HomeActivity" />
+        <activity android:name=".Activities.HomeActivity"
+
+            />
     </application>
 
 </manifest>
