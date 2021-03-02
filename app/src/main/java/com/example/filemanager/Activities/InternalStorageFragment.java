@@ -121,8 +121,13 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
     public void onFileClick(File f)
     {
         Log.d(TAG, "onFileClick: ");
+        if(actionMode!=null)
+        {//Close any context menu if single click is detected
+            actionMode.finish();
+            actionMode=null;
+        }
         //If file f is folder, then display file contents, else f is regular file -> open using app-chooser
-        if(f.isDirectory())
+        else if(f.isDirectory())
         {
             Intent i = new Intent(getContext(),FolderActivity.class);
             i.putExtra(FolderActivity.ACTION_DISPLAY_DIRECTORY_CONTENTS,f.getAbsolutePath());
