@@ -31,21 +31,19 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_container);
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+            navView.setOnNavigationItemSelectedListener(this);
             NavigationUI.setupWithNavController(navView, navController);
 
-        navView.setOnNavigationItemSelectedListener(this);
+
 
 
     }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Log.e(TAG, "onNavigationItemSelected: ");
-        switch (item.getItemId()){
-            case R.id.externalStorageFragment:
-                if(InternalStorageFragment.actionMode!=null)
+        if(item.getItemId()== R.id.externalStorageFragment && InternalStorageFragment.actionMode!=null)
                     InternalStorageFragment.actionMode.finish();
-                break;
-        }
+
         return true;
     }
 
