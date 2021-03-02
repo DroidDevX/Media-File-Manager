@@ -61,7 +61,8 @@ public class FolderActivity extends AppCompatActivity implements InternalStorage
 
     @Override
     public void onFileClick(File f) {
-        viewModel.setCurrentFolderPath(f.getAbsolutePath());
+        if(f.isDirectory())
+            viewModel.setCurrentFolderPath(f.getAbsolutePath());
     }
 
     /**
