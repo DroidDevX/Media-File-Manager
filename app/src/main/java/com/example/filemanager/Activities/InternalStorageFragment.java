@@ -90,7 +90,13 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
                     }
                     fileAdapter.setFileList(fileList);
                     if(LAST_FILE_SELECTED_POS!=-1 && getActivity()!=null){ //file was previously selected, open context menu
+                        File lastSelectedFile = fileList.get(LAST_FILE_SELECTED_POS);
+                        String filePath = lastSelectedFile.getAbsolutePath();
+                        StringBuilder titleBuilder = new StringBuilder().append(lastSelectedFile.getName());
+                        if(!lastSelectedFile.isDirectory())
+                            titleBuilder.append(filePath.substring(filePath.lastIndexOf(".")));
                         actionMode = createActionModeCallback(getActivity(),fileList.get(LAST_FILE_SELECTED_POS));
+                        actionMode.setTitle(titleBuilder.toString());
                     }
 
 
@@ -145,6 +151,11 @@ public class InternalStorageFragment extends Fragment implements InternalStorage
             return;
 
         actionMode = createActionModeCallback(getActivity(),selectedFile);
+        String filePath = selectedFile.getAbsolutePath();
+        StringBuilder titleBuilder = new StringBuilder().append(selectedFile.getName());
+        if(!selectedFile.isDirectory())
+            titleBuilder.append(filePath.substring(filePath.lastIndexOf(".")));
+        actionMode.setTitle(titleBuilder.toString());
         LAST_FILE_SELECTED_POS = filePos;
     }
 
